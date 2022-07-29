@@ -1,8 +1,8 @@
 package com.solbegsoft.favoritesapi.services;
 
 
-import com.solbegsoft.favoritesapi.models.dtos.FavoriteBeerDto;
-import org.springframework.data.domain.Pageable;
+import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
+import com.solbegsoft.favoritesapi.models.dtos.RequestDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,11 +12,13 @@ import java.util.UUID;
  */
 public interface BeerService {
 
-    List<FavoriteBeerDto> getBeerByRate(Integer userId, Integer[] rate, Pageable pageable);
+    FavoritesBeerDto getBeerById(Integer userId, UUID beerId);
 
-    boolean saveFavoriteBeer();
+    List<FavoritesBeerDto> getAllBeersByRate(RequestDto requestDto);
 
-    boolean updateFavoriteBeer();
+    FavoritesBeerDto updateFavoriteBeer(RequestDto requestDto);
 
-    boolean deleteFavoriteBeer(UUID id);
+    void deleteFavoriteBeer(Integer userId, UUID beerId);
+
+    FavoritesBeerDto saveFavoriteBeer(RequestDto requestDto);
 }

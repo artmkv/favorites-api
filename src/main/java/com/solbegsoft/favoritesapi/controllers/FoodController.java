@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 /**
  * Favorites food controller
  */
@@ -14,30 +16,32 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class FoodController {
 
-    @GetMapping("/get")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseApi<String> getFoodFavorites(){
 
         return new ResponseApi<>("message");
     }
 
-    @PostMapping("/save")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseApi<String> saveFoodFavorites(){
 
         return new ResponseApi<>("message");
     }
 
-    @PatchMapping("/update")
+    @PatchMapping()
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseApi<String> updateFoodFavorites(){
 
         return new ResponseApi<>("message");
     }
 
-    @DeleteMapping ("/del")
+    @DeleteMapping ("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<String> deleteFoodFavorites(){
+    public ResponseApi<String> deleteFoodFavorites(@PathVariable("id") UUID foodId,
+                                                   @RequestHeader Integer userId
+    ){
 
         return new ResponseApi<>("message");
     }

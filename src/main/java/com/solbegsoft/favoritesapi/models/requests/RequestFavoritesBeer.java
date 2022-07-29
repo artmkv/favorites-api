@@ -6,5 +6,5 @@ import lombok.Data;
  * Request
  */
 @Data
-public class RequestFavoriteBeer {
+public class RequestFavoritesBeer {
 }
