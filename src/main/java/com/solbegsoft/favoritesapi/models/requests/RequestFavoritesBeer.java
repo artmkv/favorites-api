@@ -1,5 +1,6 @@
 package com.solbegsoft.favoritesapi.models.requests;
 
+
 import lombok.Data;
 
 /**
@@ -7,4 +8,6 @@ import lombok.Data;
  */
 @Data
 public class RequestFavoritesBeer {
+
+    private Integer id;
 }
