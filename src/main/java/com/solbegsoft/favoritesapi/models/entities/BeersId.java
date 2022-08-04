@@ -1,7 +1,6 @@
 package com.solbegsoft.favoritesapi.models.entities;
 
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class CustomId implements Serializable {
+public class BeersId implements Serializable {
 
     /**
      * ID
@@ -32,7 +31,7 @@ public class CustomId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CustomId customId = (CustomId) o;
+        BeersId customId = (BeersId) o;
         return Objects.equals(id, customId.id) && Objects.equals(beerId, customId.beerId);
     }
 

@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -25,7 +25,7 @@ public class RequestDto extends BaseRequestDto<Long>{
     /**
      * Rate array
      */
-    private Integer[] rate;
+    private Set<Integer> rate;
 
     /**
      * @see RequestFavoritesBeer
@@ -43,13 +43,11 @@ public class RequestDto extends BaseRequestDto<Long>{
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         RequestDto that = (RequestDto) o;
-        return Objects.equals(beerId, that.beerId) && Arrays.equals(rate, that.rate) && Objects.equals(requestFavoritesBeer, that.requestFavoritesBeer) && Objects.equals(pageable, that.pageable);
+        return Objects.equals(beerId, that.beerId) && Objects.equals(rate, that.rate) && Objects.equals(requestFavoritesBeer, that.requestFavoritesBeer) && Objects.equals(pageable, that.pageable);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(super.hashCode(), beerId, requestFavoritesBeer, pageable);
-        result = 31 * result + Arrays.hashCode(rate);
-        return result;
+        return Objects.hash(super.hashCode(), beerId, rate, requestFavoritesBeer, pageable);
     }
 }

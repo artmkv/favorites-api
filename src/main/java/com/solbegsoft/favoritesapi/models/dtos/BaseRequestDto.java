@@ -1,7 +1,7 @@
 package com.solbegsoft.favoritesapi.models.dtos;
 
 
-import lombok.*;
+import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
