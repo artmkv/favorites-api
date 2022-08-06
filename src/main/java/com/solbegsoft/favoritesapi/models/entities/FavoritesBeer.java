@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -27,28 +26,26 @@ public class FavoritesBeer {
      * ID
      */
     @Id
-    @GenericGenerator(name = "Generator", strategy = "uuid")
-    @GeneratedValue(generator = "Generator")
-    @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    @Column(name = "id", columnDefinition = "uuid", updatable = false)
+    private UUID uuid;
 
     /**
      * Id_Beer from Beers_API
      */
     @Id
-    @Column(name = "beer_id", length = 64, nullable = false)
-    private Integer beerId;
+    @Column(name = "beer_api_id", nullable = false, updatable = false)
+    private Long beerId;
 
     /**
      * User Id
      */
-    @Column(name = "user_id", length = 32, nullable = false)
-    private Integer userId;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     /**
      * Rating
      */
-    @Column(name = "rate", length = 16)
+    @Column(name = "rate")
     private Integer rate;
 
     @Override
@@ -56,11 +53,11 @@ public class FavoritesBeer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FavoritesBeer that = (FavoritesBeer) o;
-        return Objects.equals(id, that.id) && Objects.equals(beerId, that.beerId) && Objects.equals(userId, that.userId) && Objects.equals(rate, that.rate);
+        return Objects.equals(uuid, that.uuid) && Objects.equals(beerId, that.beerId) && Objects.equals(userId, that.userId) && Objects.equals(rate, that.rate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, beerId, userId, rate);
+        return Objects.hash(uuid, beerId, userId, rate);
     }
 }

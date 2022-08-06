@@ -1,34 +1,34 @@
 package com.solbegsoft.favoritesapi.models.dtos;
 
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 /**
  * Favorites Beer Dto
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@RequiredArgsConstructor
 public class FavoritesBeerDto {
 
     /**
      * ID
      */
-    private UUID id;
+    private UUID uuid;
 
     /**
      * Id_Beer from Beers_API
      */
-    private Integer beerId;
+    private Long beerId;
 
     /**
      * User Id
      */
-    private Integer userId;
+    private Long userId;
 
     /**
      * Rating

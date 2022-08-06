@@ -20,23 +20,23 @@ public class BeersId implements Serializable {
     /**
      * ID
      */
-    private UUID id;
+    private UUID uuid;
 
     /**
-     * Id_Beer from Beers_API
+     * ID from Beers_API
      */
-    private Integer beerId;
+    private Long beerId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BeersId customId = (BeersId) o;
-        return Objects.equals(id, customId.id) && Objects.equals(beerId, customId.beerId);
+        BeersId beersId = (BeersId) o;
+        return Objects.equals(uuid, beersId.uuid) && Objects.equals(beerId, beersId.beerId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, beerId);
+        return Objects.hash(uuid, beerId);
     }
 }

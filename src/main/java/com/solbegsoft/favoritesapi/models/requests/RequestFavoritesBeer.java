@@ -1,27 +1,30 @@
 package com.solbegsoft.favoritesapi.models.requests;
 
 
-import lombok.Data;
+import lombok.*;
 
 import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 /**
  * Request model for Favorites beer
  */
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RequestFavoritesBeer {
 
     /**
-     * ID
+     * UUID
      */
-    private Integer id;
+    private UUID uuid;
 
     /**
      * Beer ID
      */
-    @NotNull
-    private Integer beerId;
+    private Long beerId;
 
     /**
      * Rate

@@ -22,14 +22,6 @@ public interface BeerService {
     FavoritesBeerDto getBeerById(Long userId, UUID beerId);
 
     /**
-     * Get All Favorites Beers with pageable
-     *
-     * @param userId User ID
-     * @return {@link  Page} of Favorites Beer
-     */
-    Page<FavoritesBeerDto> getAllBeers(Long userId);
-
-    /**
      * Get Favorites Beers with pageable by rating
      *
      * @param requestDto request DTO
@@ -44,6 +36,13 @@ public interface BeerService {
      * @return {@link FavoritesBeerDto}
      */
     FavoritesBeerDto updateFavoriteBeer(RequestDto requestDto);
+
+    /**
+     *
+     *
+     * @param requestDto
+     */
+    void updateRateFavoritesBeer(RequestDto requestDto);
 
     /**
      * Delete Favorites Beer

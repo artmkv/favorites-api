@@ -4,71 +4,53 @@ package com.solbegsoft.favoritesapi.repositories;
 import com.solbegsoft.favoritesapi.models.dtos.RequestDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.NoRepositoryBean;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
  * Beer Repository
  */
-@NoRepositoryBean
-public interface BeerRepository extends JpaRepository<FavoritesBeer, Long> {
+@Repository
+@Transactional
+public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
 
-    /**
-     * Find All {@link FavoritesBeer}
-     *
-     * @param requestDto request DTO
-     * @return {@link Page}
-     */
-    @Query(value = "select b from FavoritesBeer b " +
-            "where b.userId = #{@requestDto.userId} " +
-            "order by #{@requestDto.pageable.getSort()}")
-    Page<FavoritesBeer> findAll(RequestDto requestDto);
+    @Query("select b from FavoritesBeer b where b.userId = :#{#dto.userId}")
+    Page<FavoritesBeer> getAllWithPagination(@Param("dto") RequestDto dto, Pageable pageable);
 
-    /**
-     * Find All {@link FavoritesBeer} by Rate
-     *
-     * @param requestDto request DTO
-     * @return {@link Page}
-     */
-    @Query("select b from FavoritesBeer b where (b.userId = #{@requestDto.userId} and b.rate in (:#{@requestDto.rate})) group by b.rate")
-    Page<FavoritesBeer> findAllByRate(RequestDto requestDto);
+    @Query("select b from FavoritesBeer b where b.userId = :#{#dto.userId} and b.rate in :#{#dto.rate}")
+    Page<FavoritesBeer> getAllBySetRatesWithPagination(@Param("dto") RequestDto dto, Pageable pageable);
 
-    /**
-     * Update {@link FavoritesBeer}
-     *
-     * @param requestDto request DTO
-     * @return {@link FavoritesBeer}
-     */
+    @Query("select b from FavoritesBeer b where b.userId = ?1 and b.uuid = ?2")
+    FavoritesBeer getOneBeerById(Long userId, UUID uuid);
+
     @Modifying
-    @Query("update FavoritesBeer b set b.rate = #{@requestDto.requestFavoritesBeer.rate} " +
-            "where b.id = #{@requestDto.requestFavoritesBeer.id}")
-    FavoritesBeer updateFavoriteBeerById(RequestDto requestDto);
+    @Query("delete from FavoritesBeer b where b.userId = ?1 and b.uuid = ?2")
+    void deleteOne(Long userId, UUID uuid);
 
-    /**
-     * Save {@link FavoritesBeer}
-     *
-     * @param requestDto request DTO
-     * @return {@link FavoritesBeer}
-     */
+    @Modifying
+    @Query("update FavoritesBeer b set b.rate = :#{#dto.requestFavoritesBeer.rate} where b.uuid = :#{#dto.requestFavoritesBeer.uuid}")
+    void updateRateFavoriteBeer(@Param("dto") FavoritesBeer entity);
+
+
+    @Modifying
+    @Query("update FavoritesBeer b set b = :#{#dto} where b.uuid = :#{#dto.requestFavoritesBeer.uuid}")
+    void updateFavoriteBeer(@Param("dto") FavoritesBeer entity);
+
     @Modifying
     @Query(nativeQuery = true,
-            value = "insert into FavoritesBeer(userId, beerId, rate) " +
-                    "values(#{@requestDto.userId}, " +
-                    "#{@requestDto.requestFavoritesBeer.beerId}," +
-                    "#{@requestDto.requestFavoritesBeer.rate})")
-    FavoritesBeer saveOneFavoriteBeer(RequestDto requestDto);
+            value = "insert into favorites(user_id, beer_api_id, rate) " +
+                    "values(:#{#dto.userId}, :#{#dto.requestFavoritesBeer.beerId}, :#{#dto.requestFavoritesBeer.rate})")
+    int saveFavoritesBeer(@Param("dto") RequestDto dto);
 
-    /**
-     * Delete {@link FavoritesBeer}
-     *
-     * @param userId user ID
-     * @param id     ID of FavoritesBeer
-     */
-    @Modifying
-    @Query("delete from FavoritesBeer b where b.userId = ?1 and b.id = ?2")
-    void deleteOne(Long userId, UUID id);
+    Optional<FavoritesBeer> findByUserIdAndBeerId(Long userId, Long beerId);
+
+
 }
