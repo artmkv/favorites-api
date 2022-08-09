@@ -27,7 +27,7 @@ public class FavoritesBeer {
      */
     @Id
     @Column(name = "id", columnDefinition = "uuid", updatable = false)
-    private UUID uuid;
+    private UUID id;
 
     /**
      * Id_Beer from Beers_API
@@ -53,11 +53,11 @@ public class FavoritesBeer {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FavoritesBeer that = (FavoritesBeer) o;
-        return Objects.equals(uuid, that.uuid) && Objects.equals(beerId, that.beerId) && Objects.equals(userId, that.userId) && Objects.equals(rate, that.rate);
+        return Objects.equals(id, that.id) && Objects.equals(beerId, that.beerId) && Objects.equals(userId, that.userId) && Objects.equals(rate, that.rate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, beerId, userId, rate);
+        return Objects.hash(id, beerId, userId, rate);
     }
 }

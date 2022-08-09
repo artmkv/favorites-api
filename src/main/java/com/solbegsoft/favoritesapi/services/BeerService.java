@@ -2,7 +2,9 @@ package com.solbegsoft.favoritesapi.services;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
-import com.solbegsoft.favoritesapi.models.dtos.RequestDto;
+import com.solbegsoft.favoritesapi.models.dtos.GetRequestDto;
+import com.solbegsoft.favoritesapi.models.dtos.SaveRequestDto;
+import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;
@@ -24,25 +26,25 @@ public interface BeerService {
     /**
      * Get Favorites Beers with pageable by rating
      *
-     * @param requestDto request DTO
+     * @param getRequestDto request DTO
      * @return {@link  Page} of Favorites Beer
      */
-    Page<FavoritesBeerDto> getAllBeersByRate(RequestDto requestDto);
+    Page<FavoritesBeerDto> getAllBeersByRate(GetRequestDto getRequestDto);
 
     /**
      * Update Favorite Beer
      *
-     * @param requestDto request Dto
+     * @param getRequestDto request Dto
      * @return {@link FavoritesBeerDto}
      */
-    FavoritesBeerDto updateFavoriteBeer(RequestDto requestDto);
+    FavoritesBeerDto updateFavoriteBeer(UpdateRequestDto getRequestDto);
 
     /**
      *
      *
-     * @param requestDto
+     * @param getRequestDto
      */
-    void updateRateFavoritesBeer(RequestDto requestDto);
+    FavoritesBeerDto updateRateFavoritesBeer(UpdateRequestDto getRequestDto);
 
     /**
      * Delete Favorites Beer
@@ -58,5 +60,5 @@ public interface BeerService {
      * @param requestDto Request Dto
      * @return {@link FavoritesBeerDto}
      */
-    FavoritesBeerDto saveFavoriteBeer(RequestDto requestDto);
+    FavoritesBeerDto saveFavoriteBeer(SaveRequestDto requestDto);
 }

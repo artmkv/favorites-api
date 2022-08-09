@@ -18,7 +18,7 @@ public class FavoritesBeerDto {
     /**
      * ID
      */
-    private UUID uuid;
+    private UUID id;
 
     /**
      * Id_Beer from Beers_API

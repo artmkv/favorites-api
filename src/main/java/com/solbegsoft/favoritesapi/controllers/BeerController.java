@@ -2,10 +2,11 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
-import com.solbegsoft.favoritesapi.models.dtos.RequestDto;
-import com.solbegsoft.favoritesapi.models.requests.RequestFavoritesBeer;
+import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
+import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.services.BeerService;
+import com.solbegsoft.favoritesapi.utils.RequestFavoritesBeerToRequestDtoConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.ap.internal.util.Collections;
@@ -17,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.DecimalMax;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,6 +36,11 @@ public class BeerController {
      * @see BeerService
      */
     private final BeerService beerService;
+
+    /**
+     * Converter
+     */
+    private final RequestFavoritesBeerToRequestDtoConverter converter;
 
     /**
      * Get All favorites beers by userId
@@ -54,11 +61,11 @@ public class BeerController {
                                                                 @RequestHeader(value = "userId") Long userId
     ) {
         log.info("#GET: Get all beers by userId {}, rate {}", userId, rate);
-        Page<FavoritesBeerDto> favorites = beerService.getAllBeersByRate(RequestDto.builder()
-                .userId(userId)
-                .pageable(PageRequest.of(page, size, Sort.by(order)))
-                .rate(Collections.asSet(rate))
-                .build()
+        Page<FavoritesBeerDto> favorites = beerService.getAllBeersByRate(
+                converter.getInstance().convertToGetRequestDto(
+                        userId,
+                        Collections.asSet(rate),
+                        PageRequest.of(page, size, Sort.by(order)))
         );
         log.info("#GET: Success get all beers by userId {}, rate {}", userId, rate);
 
@@ -68,18 +75,18 @@ public class BeerController {
     /**
      * Get Favorites Beer by beer ID and by User ID
      *
-     * @param uuid   ID of beer
+     * @param id     ID of beer
      * @param userId ID of user
      * @return {@link Optional} of favorites beers
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<FavoritesBeerDto> getBeerFavoritesById(@PathVariable("id") UUID uuid,
+    public ResponseApi<FavoritesBeerDto> getBeerFavoritesById(@PathVariable("id") UUID id,
                                                               @RequestHeader Long userId
     ) {
-        log.info("#GET: Get beer by userId {}, beerID {}", userId, uuid);
-        FavoritesBeerDto favorites = beerService.getBeerById(userId, uuid);
-        log.info("#GET: Success get beer by userId {}, beerID {}", userId, uuid);
+        log.info("#GET: Get beer by userId {}, ID {}", userId, id);
+        FavoritesBeerDto favorites = beerService.getBeerById(userId, id);
+        log.info("#GET: Success get beer by userId {}, ID {}", userId, id);
 
         return new ResponseApi<>(favorites);
     }
@@ -93,38 +100,35 @@ public class BeerController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseApi<FavoritesBeerDto> saveBeerFavorites(@RequestBody @Valid RequestFavoritesBeer request,
+    public ResponseApi<FavoritesBeerDto> saveBeerFavorites(@RequestBody @Valid SaveFavoritesBeerRequest request,
                                                            @RequestHeader Long userId
     ) {
-        FavoritesBeerDto result = beerService.saveFavoriteBeer(RequestDto.builder()
-                .userId(userId)
-                .requestFavoritesBeer(request)
-                .build());
+        log.info("#POST: userId {}, beerID {}", userId, request.getBeerId());
+        FavoritesBeerDto result = beerService.saveFavoriteBeer(converter.convertToSaveRequestDto(userId, request));
+        log.info("#POST: Save success with userId {}, beerID {}", userId, request.getBeerId());
+
         return new ResponseApi<>(result);
     }
 
     /**
      * Update favorite beer
      *
-     * @param uuid    beer ID
+     * @param id      beer ID
      * @param userId  user ID
      * @param request favorite beer request
      * @return {@link FavoritesBeerDto}
      */
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<FavoritesBeerDto> updateBeerFavorites(@PathVariable("id") UUID uuid,
+    public ResponseApi<FavoritesBeerDto> updateBeerFavorites(@PathVariable("id") UUID id,
                                                              @RequestHeader Long userId,
-                                                             @RequestBody @Valid RequestFavoritesBeer request
+                                                             @RequestBody @Valid UpdateFavoritesBeerRequest request
     ) {
-        log.info("#PATCH: userId {}, beerID {}", userId, uuid);
-        FavoritesBeerDto result = beerService.updateFavoriteBeer(RequestDto.builder()
-                .userId(userId)
-                .uuid(uuid)
-                .requestFavoritesBeer(request)
-                .build()
+        log.info("#PATCH: userId {}, beerID {}", userId, id);
+        FavoritesBeerDto result = beerService.updateFavoriteBeer(
+                converter.getInstance().convertToUpdateRequestDto(userId, id, request)
         );
-        log.info("#PATCH: updated success userId {}, beerID {}", userId, uuid);
+        log.info("#PATCH: updated success userId {}, beerID {}", userId, id);
 
         return new ResponseApi<>(result);
     }
@@ -132,48 +136,42 @@ public class BeerController {
     /**
      * Update one favorite beer
      *
-     * @param uuid   beer UUID ID
+     * @param id     beer UUID ID
      * @param rate   rating of favorites beer
      * @param userId user ID
      * @return {@link FavoritesBeerDto}
      */
     @PatchMapping("/{id}/{rate}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<FavoritesBeerDto> updateRateOfBeerFavorites(@PathVariable("id") UUID uuid,
-                                                                   @PathVariable("rate") Integer rate,
+    public ResponseApi<Boolean> updateRateOfBeerFavorites(@PathVariable("id") UUID id,
+                                                                   @PathVariable("rate") @DecimalMax(value = "5") Integer rate,
                                                                    @RequestHeader Long userId
     ) {
-        log.info("#PATCH: userId {}, beerID {}", userId, uuid);
-        FavoritesBeerDto result = beerService.updateFavoriteBeer(RequestDto.builder()
-                .userId(userId)
-                .uuid(uuid)
-                .rate(Collections.asSet(rate))
-                .requestFavoritesBeer(RequestFavoritesBeer.builder()
-                        .uuid(uuid)
-                        .rate(rate)
-                        .build())
-                .build()
-        );
-        log.info("#PATCH: updated success userId {}, beerID {}", userId, uuid);
+        log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
-        return new ResponseApi<>(result);
+        beerService.updateRateFavoritesBeer(
+                converter.getInstance().convertToUpdateRequestDto(userId, id, rate));
+
+        log.info("#PATCH: updated success userId {}, beerUUID {}", userId, id);
+
+        return new ResponseApi<>(Boolean.TRUE);
     }
 
     /**
      * Delete one favorites beer
      *
-     * @param uuid   beer ID
+     * @param id     beerUUID
      * @param userId user ID
      * @return boolean
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<Boolean> deleteBeerFavoritesById(@PathVariable("id") UUID uuid,
+    public ResponseApi<Boolean> deleteBeerFavoritesById(@PathVariable("id") UUID id,
                                                         @RequestHeader Long userId
     ) {
-        log.info("#DELETE: userId {}, beerID {}", userId, uuid);
-        beerService.deleteFavoriteBeer(userId, uuid);
-        log.info("#DELETE: deleted success userId {}, beerID {}", userId, uuid);
+        log.info("#DELETE: userId {}, id {}", userId, id);
+        beerService.deleteFavoriteBeer(userId, id);
+        log.info("#DELETE: deleted success userId {}, Id {}", userId, id);
 
         return new ResponseApi<>(Boolean.TRUE);
     }

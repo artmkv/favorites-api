@@ -5,21 +5,19 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Base request
- *
- * @param <T> Serializable type of USER ID
  */
 @Data
 @SuperBuilder
-public abstract class BaseRequestDto<T extends Serializable> {
+public abstract class BaseRequestDto {
 
     /**
      * User ID
      */
     @NotNull
-    private T userId;
+    private Long userId;
 
 }
