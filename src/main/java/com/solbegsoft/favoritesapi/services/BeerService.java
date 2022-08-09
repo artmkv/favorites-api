@@ -34,17 +34,18 @@ public interface BeerService {
     /**
      * Update Favorite Beer
      *
-     * @param getRequestDto request Dto
+     * @param requestDto request Dto
      * @return {@link FavoritesBeerDto}
      */
-    FavoritesBeerDto updateFavoriteBeer(UpdateRequestDto getRequestDto);
+    FavoritesBeerDto updateFavoriteBeer(UpdateRequestDto requestDto);
 
     /**
+     * Update Rate of Favorites Beer
      *
-     *
-     * @param getRequestDto
+     * @param requestDto Update Request Dto
+     * @return {@link FavoritesBeerDto}
      */
-    FavoritesBeerDto updateRateFavoritesBeer(UpdateRequestDto getRequestDto);
+    FavoritesBeerDto updateRateFavoritesBeer(UpdateRequestDto requestDto);
 
     /**
      * Delete Favorites Beer

@@ -4,11 +4,11 @@ package com.solbegsoft.favoritesapi.models.requests;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 /**
- * Request model for Save Favorites beer
+ * Request model for Update Favorites beer
  */
 @Getter
 @Setter
@@ -21,9 +21,13 @@ public class UpdateFavoritesBeerRequest extends AbstractFavoritesBeerRequest{
     /**
      * ID
      */
-    @NotBlank
+    @NotNull
     private UUID id;
 
+    /**
+     * beer ID
+     */
+    @NotNull
     private Long beerId;
 
 }

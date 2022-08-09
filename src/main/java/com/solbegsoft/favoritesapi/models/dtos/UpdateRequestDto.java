@@ -1,10 +1,11 @@
 package com.solbegsoft.favoritesapi.models.dtos;
 
 
-import com.solbegsoft.favoritesapi.models.requests.AbstractFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
-import lombok.*;
+import lombok.Data;
 import lombok.experimental.SuperBuilder;
+
+import java.util.Objects;
 
 /**
  * Update Request Dto

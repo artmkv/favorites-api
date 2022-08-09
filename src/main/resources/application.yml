@@ -6,13 +6,8 @@ spring:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/demobase}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:pass}
-  jpa:
-    show-sql: true
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
   flyway:
-    schemas: favorites_api
+    schemas: ${FLYWAY_SCHEMAS:beers}
 
 server:
   port: 8071

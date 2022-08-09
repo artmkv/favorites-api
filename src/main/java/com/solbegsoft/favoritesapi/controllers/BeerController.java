@@ -75,8 +75,8 @@ public class BeerController {
     /**
      * Get Favorites Beer by beer ID and by User ID
      *
-     * @param id     ID of beer
-     * @param userId ID of user
+     * @param id     Favorites beer ID
+     * @param userId user ID
      * @return {@link Optional} of favorites beers
      */
     @GetMapping("/{id}")
@@ -94,8 +94,8 @@ public class BeerController {
     /**
      * Save favorite beer
      *
-     * @param request request favorites beers
-     * @param userId  ID of user
+     * @param request Save request favorites beers
+     * @param userId  user ID
      * @return {@link FavoritesBeerDto}
      */
     @PostMapping
@@ -113,7 +113,7 @@ public class BeerController {
     /**
      * Update favorite beer
      *
-     * @param id      beer ID
+     * @param id      Favorites beer ID
      * @param userId  user ID
      * @param request favorite beer request
      * @return {@link FavoritesBeerDto}
@@ -136,31 +136,31 @@ public class BeerController {
     /**
      * Update one favorite beer
      *
-     * @param id     beer UUID ID
+     * @param id     Favorites beer ID
      * @param rate   rating of favorites beer
      * @param userId user ID
      * @return {@link FavoritesBeerDto}
      */
     @PatchMapping("/{id}/{rate}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<Boolean> updateRateOfBeerFavorites(@PathVariable("id") UUID id,
+    public ResponseApi<FavoritesBeerDto> updateRateOfBeerFavorites(@PathVariable("id") UUID id,
                                                                    @PathVariable("rate") @DecimalMax(value = "5") Integer rate,
                                                                    @RequestHeader Long userId
     ) {
         log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
-        beerService.updateRateFavoritesBeer(
+        FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(
                 converter.getInstance().convertToUpdateRequestDto(userId, id, rate));
 
         log.info("#PATCH: updated success userId {}, beerUUID {}", userId, id);
 
-        return new ResponseApi<>(Boolean.TRUE);
+        return new ResponseApi<>(favoritesBeer);
     }
 
     /**
      * Delete one favorites beer
      *
-     * @param id     beerUUID
+     * @param id     Favorites beer ID
      * @param userId user ID
      * @return boolean
      */
@@ -169,7 +169,7 @@ public class BeerController {
     public ResponseApi<Boolean> deleteBeerFavoritesById(@PathVariable("id") UUID id,
                                                         @RequestHeader Long userId
     ) {
-        log.info("#DELETE: userId {}, id {}", userId, id);
+        log.info("#DELETE: userId {}, Id {}", userId, id);
         beerService.deleteFavoriteBeer(userId, id);
         log.info("#DELETE: deleted success userId {}, Id {}", userId, id);
 

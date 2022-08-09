@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -19,27 +20,29 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Entity
 @IdClass(BeersId.class)
-@Table(name = "favorites")
+@Table(name = "favorites", schema = "beers")
 public class FavoritesBeer {
 
     /**
      * ID
      */
     @Id
-    @Column(name = "id", columnDefinition = "uuid", updatable = false)
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
     /**
      * Id_Beer from Beers_API
      */
     @Id
-    @Column(name = "beer_api_id", nullable = false, updatable = false)
+    @Column(name = "beer_id")
     private Long beerId;
 
     /**
      * User Id
      */
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, updatable = false)
     private Long userId;
 
     /**

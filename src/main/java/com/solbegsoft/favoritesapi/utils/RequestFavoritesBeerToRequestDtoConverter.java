@@ -1,5 +1,7 @@
 package com.solbegsoft.favoritesapi.utils;
 
+
+import com.solbegsoft.favoritesapi.exceptions.BadRequestOrPathException;
 import com.solbegsoft.favoritesapi.models.dtos.GetRequestDto;
 import com.solbegsoft.favoritesapi.models.dtos.SaveRequestDto;
 import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
@@ -15,23 +17,32 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Request Converter
+ */
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Component
-public final class RequestFavoritesBeerToRequestDtoConverter {
+public class RequestFavoritesBeerToRequestDtoConverter {
 
-    private static RequestFavoritesBeerToRequestDtoConverter INSTANCE;
+    private static final RequestFavoritesBeerToRequestDtoConverter INSTANCE = new RequestFavoritesBeerToRequestDtoConverter();
 
+    /**
+     * @return instance of {@link RequestFavoritesBeerToRequestDtoConverter}
+     */
     public RequestFavoritesBeerToRequestDtoConverter getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new RequestFavoritesBeerToRequestDtoConverter();
-        }
         return INSTANCE;
     }
 
-//    private RequestFavoritesBeerToRequestDtoConverter() {
-//    }
+    public GetRequestDto convertToGetRequestDto(Long userId, Set<Integer> rate, Pageable pageable) {
+
+        return GetRequestDto.builder()
+                .userId(userId)
+                .rate(rate)
+                .pageable(pageable)
+                .build();
+    }
 
     public SaveRequestDto convertToSaveRequestDto(Long userId, SaveFavoritesBeerRequest request) {
 
@@ -42,7 +53,11 @@ public final class RequestFavoritesBeerToRequestDtoConverter {
     }
 
     public UpdateRequestDto convertToUpdateRequestDto(Long userId, UUID id, UpdateFavoritesBeerRequest request) {
-
+        if (!id.equals(request.getId())) {
+            throw new BadRequestOrPathException(
+                    String.format(ExceptionMessagesConstant.MISMATCH_ID_IN_REQUEST, id, request.getId())
+            );
+        }
         return UpdateRequestDto.builder()
                 .userId(userId)
                 .requestFavoritesBeer(request)
@@ -57,15 +72,6 @@ public final class RequestFavoritesBeerToRequestDtoConverter {
                         .id(id)
                         .rate(rate)
                         .build())
-                .build();
-    }
-
-    public GetRequestDto convertToGetRequestDto(Long userId, Set<Integer> rate, Pageable pageable) {
-
-        return GetRequestDto.builder()
-                .userId(userId)
-                .rate(rate)
-                .pageable(pageable)
                 .build();
     }
 }

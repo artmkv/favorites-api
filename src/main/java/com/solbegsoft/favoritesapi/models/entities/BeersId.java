@@ -2,7 +2,7 @@ package com.solbegsoft.favoritesapi.models.entities;
 
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class BeersId implements Serializable {
 
     /**

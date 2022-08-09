@@ -48,9 +48,9 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
 
     @Modifying
     @Query(nativeQuery = true,
-            value = "insert into favorites(user_id, beer_api_id, rate) " +
+            value = "insert into beers.favorites(user_id, beer_id, rate) " +
                     "values(:#{#dto.userId}, :#{#dto.requestFavoritesBeer.beerId}, :#{#dto.requestFavoritesBeer.rate})")
-    UUID saveFavoritesBeer(@Param("dto") SaveRequestDto dto);
+    void saveFavoritesBeer(@Param("dto") SaveRequestDto dto);
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#userId} and b.beerId = :#{#beerId}")
     Optional<FavoritesBeer> findByUserAndBeer(Long userId, Long beerId);

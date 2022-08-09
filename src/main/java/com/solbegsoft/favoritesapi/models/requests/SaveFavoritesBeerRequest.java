@@ -4,7 +4,7 @@ package com.solbegsoft.favoritesapi.models.requests;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * Request model for Save Favorites beer
@@ -20,7 +20,7 @@ public class SaveFavoritesBeerRequest extends AbstractFavoritesBeerRequest{
     /**
      * Beer ID
      */
-    @NotBlank(message = "beerId not Valid")
+    @NotNull
     private Long beerId;
 
 }
