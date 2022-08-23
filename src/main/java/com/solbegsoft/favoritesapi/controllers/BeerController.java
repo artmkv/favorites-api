@@ -58,7 +58,7 @@ public class BeerController {
                                                                 @RequestParam(defaultValue = "20", required = false) Integer size,
                                                                 @RequestParam(defaultValue = "id", required = false) String order,
                                                                 @RequestParam(required = false) Integer[] rate,
-                                                                @RequestHeader(value = "userId") Long userId
+                                                                @RequestHeader(value = "userId", required = false) UUID userId
     ) {
         log.info("#GET: Get all beers by userId {}, rate {}", userId, rate);
         Page<FavoritesBeerDto> favorites = beerService.getAllBeersByRate(
@@ -82,7 +82,7 @@ public class BeerController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseApi<FavoritesBeerDto> getBeerFavoritesById(@PathVariable("id") UUID id,
-                                                              @RequestHeader Long userId
+                                                              @RequestHeader UUID userId
     ) {
         log.info("#GET: Get beer by userId {}, ID {}", userId, id);
         FavoritesBeerDto favorites = beerService.getBeerById(userId, id);
@@ -101,7 +101,7 @@ public class BeerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseApi<FavoritesBeerDto> saveBeerFavorites(@RequestBody @Valid SaveFavoritesBeerRequest request,
-                                                           @RequestHeader Long userId
+                                                           @RequestHeader UUID userId
     ) {
         log.info("#POST: userId {}, beerID {}", userId, request.getBeerId());
         FavoritesBeerDto result = beerService.saveFavoriteBeer(converter.convertToSaveRequestDto(userId, request));
@@ -121,7 +121,7 @@ public class BeerController {
     @PatchMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseApi<FavoritesBeerDto> updateBeerFavorites(@PathVariable("id") UUID id,
-                                                             @RequestHeader Long userId,
+                                                             @RequestHeader UUID userId,
                                                              @RequestBody @Valid UpdateFavoritesBeerRequest request
     ) {
         log.info("#PATCH: userId {}, beerID {}", userId, id);
@@ -145,7 +145,7 @@ public class BeerController {
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseApi<FavoritesBeerDto> updateRateOfBeerFavorites(@PathVariable("id") UUID id,
                                                                    @PathVariable("rate") @DecimalMax(value = "5") Integer rate,
-                                                                   @RequestHeader Long userId
+                                                                   @RequestHeader UUID userId
     ) {
         log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
@@ -167,7 +167,7 @@ public class BeerController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseApi<Boolean> deleteBeerFavoritesById(@PathVariable("id") UUID id,
-                                                        @RequestHeader Long userId
+                                                        @RequestHeader UUID userId
     ) {
         log.info("#DELETE: userId {}, Id {}", userId, id);
         beerService.deleteFavoriteBeer(userId, id);

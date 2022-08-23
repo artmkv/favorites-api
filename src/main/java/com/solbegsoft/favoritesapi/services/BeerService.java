@@ -21,7 +21,7 @@ public interface BeerService {
      * @param beerId Beer ID
      * @return {@link FavoritesBeerDto}
      */
-    FavoritesBeerDto getBeerById(Long userId, UUID beerId);
+    FavoritesBeerDto getBeerById(UUID userId, UUID beerId);
 
     /**
      * Get Favorites Beers with pageable by rating
@@ -53,7 +53,7 @@ public interface BeerService {
      * @param userId User ID
      * @param beerId Beer ID
      */
-    void deleteFavoriteBeer(Long userId, UUID beerId);
+    void deleteFavoriteBeer(UUID userId, UUID beerId);
 
     /**
      * Save Favorites Beer

@@ -33,7 +33,7 @@ public class BeerServiceImpl implements BeerService {
     private final BeerRepository beerRepository;
 
     @Override
-    public FavoritesBeerDto getBeerById(Long userId, UUID id) {
+    public FavoritesBeerDto getBeerById(UUID userId, UUID id) {
 
         return beerRepository.findOneBeerById(userId, id)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
@@ -53,7 +53,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public void deleteFavoriteBeer(Long userId, UUID id) {
+    public void deleteFavoriteBeer(UUID userId, UUID id) {
 
         FavoritesBeer result = beerRepository.findOneBeerById(userId, id)
                 .orElseThrow(() -> new EntityNotFoundException(
@@ -64,7 +64,7 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public FavoritesBeerDto updateRateFavoritesBeer(UpdateRequestDto requestDto) {
         UUID id = requestDto.getRequestFavoritesBeer().getId();
-        Long userId = requestDto.getUserId();
+        UUID userId = requestDto.getUserId();
         beerRepository.updateRateFavoriteBeer(requestDto);
 
         return beerRepository.findOneBeerById(userId, id)
@@ -88,7 +88,7 @@ public class BeerServiceImpl implements BeerService {
     @Override
     public FavoritesBeerDto saveFavoriteBeer(SaveRequestDto requestDto) {
 
-        Long userId = requestDto.getUserId();
+        UUID userId = requestDto.getUserId();
         Long beerId = requestDto.getRequestFavoritesBeer().getBeerId();
 
         if (beerRepository.findByUserAndBeer(userId, beerId).isPresent()) {

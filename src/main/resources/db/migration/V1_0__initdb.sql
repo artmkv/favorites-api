@@ -8,7 +8,7 @@ create table favorites
     id      uuid default uuid_generate_v1(),
     beer_id int8 not null,
     rate    int4,
-    user_id int8 not null,
+    user_id uuid not null,
     primary key (beer_id, id)
 );
 

@@ -6,8 +6,6 @@ import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
-
 /**
  * Save Request Dto
  */

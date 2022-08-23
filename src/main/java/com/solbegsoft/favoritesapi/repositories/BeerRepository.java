@@ -31,11 +31,11 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     Page<FavoritesBeer> getAllBySetRatesWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
 
     @Query("select b from FavoritesBeer b where b.userId = ?1 and b.id = ?2")
-    Optional<FavoritesBeer> findOneBeerById(Long userId, UUID id);
+    Optional<FavoritesBeer> findOneBeerById(UUID userId, UUID id);
 
     @Modifying
     @Query("delete from FavoritesBeer b where b.userId = ?1 and b.id = ?2")
-    void deleteOne(Long userId, UUID uuid);
+    void deleteOne(UUID userId, UUID uuid);
 
     @Modifying
     @Query("update FavoritesBeer b set b.rate = :#{#dto.requestFavoritesBeer.rate} " +
@@ -53,6 +53,6 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     void saveFavoritesBeer(@Param("dto") SaveRequestDto dto);
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#userId} and b.beerId = :#{#beerId}")
-    Optional<FavoritesBeer> findByUserAndBeer(Long userId, Long beerId);
+    Optional<FavoritesBeer> findByUserAndBeer(UUID userId, Long beerId);
 
 }

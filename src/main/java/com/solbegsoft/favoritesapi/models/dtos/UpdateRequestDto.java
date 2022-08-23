@@ -5,8 +5,6 @@ import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
 import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
-
 /**
  * Update Request Dto
  */

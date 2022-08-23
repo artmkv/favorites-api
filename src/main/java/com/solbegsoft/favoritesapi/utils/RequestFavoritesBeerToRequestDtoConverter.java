@@ -35,7 +35,7 @@ public class RequestFavoritesBeerToRequestDtoConverter {
         return INSTANCE;
     }
 
-    public GetRequestDto convertToGetRequestDto(Long userId, Set<Integer> rate, Pageable pageable) {
+    public GetRequestDto convertToGetRequestDto(UUID userId, Set<Integer> rate, Pageable pageable) {
 
         return GetRequestDto.builder()
                 .userId(userId)
@@ -44,7 +44,7 @@ public class RequestFavoritesBeerToRequestDtoConverter {
                 .build();
     }
 
-    public SaveRequestDto convertToSaveRequestDto(Long userId, SaveFavoritesBeerRequest request) {
+    public SaveRequestDto convertToSaveRequestDto(UUID userId, SaveFavoritesBeerRequest request) {
 
         return SaveRequestDto.builder()
                 .userId(userId)
@@ -52,7 +52,7 @@ public class RequestFavoritesBeerToRequestDtoConverter {
                 .build();
     }
 
-    public UpdateRequestDto convertToUpdateRequestDto(Long userId, UUID id, UpdateFavoritesBeerRequest request) {
+    public UpdateRequestDto convertToUpdateRequestDto(UUID userId, UUID id, UpdateFavoritesBeerRequest request) {
         if (!id.equals(request.getId())) {
             throw new BadRequestOrPathException(
                     String.format(ExceptionMessagesConstant.MISMATCH_ID_IN_REQUEST, id, request.getId())
@@ -64,7 +64,7 @@ public class RequestFavoritesBeerToRequestDtoConverter {
                 .build();
     }
 
-    public UpdateRequestDto convertToUpdateRequestDto(Long userId, UUID id, Integer rate) {
+    public UpdateRequestDto convertToUpdateRequestDto(UUID userId, UUID id, Integer rate) {
 
         return UpdateRequestDto.builder()
                 .userId(userId)

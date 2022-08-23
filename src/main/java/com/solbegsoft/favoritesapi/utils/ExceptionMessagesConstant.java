@@ -1,5 +1,6 @@
 package com.solbegsoft.favoritesapi.utils;
 
+
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

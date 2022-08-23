@@ -28,7 +28,7 @@ public class FavoritesBeerDto {
     /**
      * User Id
      */
-    private Long userId;
+    private UUID userId;
 
     /**
      * Rating

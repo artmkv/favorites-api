@@ -43,7 +43,7 @@ public class FavoritesBeer {
      * User Id
      */
     @Column(name = "user_id", nullable = false, updatable = false)
-    private Long userId;
+    private UUID userId;
 
     /**
      * Rating
