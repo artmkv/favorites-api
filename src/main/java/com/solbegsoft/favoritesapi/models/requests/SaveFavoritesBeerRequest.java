@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@SuperBuilder
+@SuperBuilder // TODO: 05.09.2022 ????????
 public class SaveFavoritesBeerRequest extends AbstractFavoritesBeerRequest{
 
     /**

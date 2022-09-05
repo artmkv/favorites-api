@@ -83,6 +83,8 @@ public class BeerData {
      */
     @Column
     private double attenuationLevel;
+
+    // TODO: 05.09.2022 мусор!!!!
 //    /**
 //     * food array
 //     */

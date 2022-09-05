@@ -46,7 +46,7 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     @Query("update FavoritesBeer b set b = :#{#entity} where b.id = :#{#entity.id} and b.userId = :#{#entity.userId}")
     void updateFavoriteBeer(@Param("entity") FavoritesBeer entity);
 
-    @Modifying
+    @Modifying // TODO: 05.09.2022 возможно избыточно, проверить
     @Query(nativeQuery = true,
             value = "insert into beers.favorites(user_id, beer_id, rate) " +
                     "values(:#{#dto.userId}, :#{#dto.requestFavoritesBeer.beerId}, :#{#dto.requestFavoritesBeer.rate})")

@@ -2,6 +2,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
+import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
@@ -40,7 +41,8 @@ public class BeerController {
     /**
      * Converter
      */
-    private final RequestFavoritesBeerToRequestDtoConverter converter;
+    private final RequestFavoritesBeerToRequestDtoConverter converter; // TODO: 05.09.2022
+
 
     /**
      * Get All favorites beers by userId
@@ -124,9 +126,11 @@ public class BeerController {
                                                              @RequestHeader UUID userId,
                                                              @RequestBody @Valid UpdateFavoritesBeerRequest request
     ) {
+
         log.info("#PATCH: userId {}, beerID {}", userId, id);
+        // TODO: 05.09.2022 эмм... converter.getInstance().convertToUpdateRequestDto не проще ли converter.convertToUpdateRequestDto ????
         FavoritesBeerDto result = beerService.updateFavoriteBeer(
-                converter.getInstance().convertToUpdateRequestDto(userId, id, request)
+                converter.getInstance().convertToUpdateRequestDto(userId, id, request) // TODO: 05.09.2022 пример KISS не надо так делать, вынеси в отдельную переменную
         );
         log.info("#PATCH: updated success userId {}, beerID {}", userId, id);
 
@@ -149,6 +153,10 @@ public class BeerController {
     ) {
         log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
+        // TODO: 05.09.2022 не надо пытаться запихнуть ну так же легче читается:
+        UpdateRequestDto requestDto111 = converter.convertToUpdateRequestDto(userId, id, rate);
+        FavoritesBeerDto favoritesBeer111 = beerService.updateRateFavoritesBeer(requestDto111);
+        // TODO: 05.09.2022
         FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(
                 converter.getInstance().convertToUpdateRequestDto(userId, id, rate));
 

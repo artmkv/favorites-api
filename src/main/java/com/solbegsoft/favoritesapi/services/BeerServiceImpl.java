@@ -74,6 +74,7 @@ public class BeerServiceImpl implements BeerService {
 
     @Override
     public FavoritesBeerDto updateFavoriteBeer(UpdateRequestDto requestDto) {
+
         UUID id = requestDto.getRequestFavoritesBeer().getId();
 
         FavoritesBeer favoritesBeer = beerRepository.findOneBeerById(requestDto.getUserId(), id)
@@ -99,9 +100,9 @@ public class BeerServiceImpl implements BeerService {
         return beerRepository.findByUserAndBeer(userId, beerId)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(ExceptionMessagesConstant.ENTITY_NOT_FOUND, beerId)));
-
     }
 
+    // TODO: 05.09.2022 конвертер?
     private static void updateFavoritesBeerFromRequest(UpdateRequestDto request, FavoritesBeer favoritesBeer) {
 
         FavoritesBeerDto dto = FavoritesBeerDto.builder()
@@ -111,6 +112,6 @@ public class BeerServiceImpl implements BeerService {
                 .rate(request.getRequestFavoritesBeer().getRate())
                 .build();
 
-        FavoritesBeerConverter.INSTANCE.updateFavoritesBeerFromDto(dto, favoritesBeer);
+        FavoritesBeerConverter.INSTANCE.updateFavoritesBeerFromDto(dto, favoritesBeer); // TODO: 05.09.2022 ??????
     }
 }

@@ -18,30 +18,16 @@ public class FoodController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<String> getFoodFavorites(){
+    public ResponseApi<String> getFoodFavorites(){ // TODO: 05.09.2022 тут нужно вернуть все строки хавчика
 
         return new ResponseApi<>("message");
     }
+
+    // TODO: 05.09.2022 еще 1 эндпоинт для конкретного хавчика, если в строке есть совпадение достать лист строк
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseApi<String> saveFoodFavorites(){
-
-        return new ResponseApi<>("message");
-    }
-
-    @PatchMapping()
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<String> updateFoodFavorites(){
-
-        return new ResponseApi<>("message");
-    }
-
-    @DeleteMapping ("/{id}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<String> deleteFoodFavorites(@PathVariable("id") UUID foodId,
-                                                   @RequestHeader Integer userId
-    ){
+    public ResponseApi<String> saveFoodFavorites(){ // TODO: 05.09.2022 добавляешь юзеру по бир айди строку с хавчиком
 
         return new ResponseApi<>("message");
     }

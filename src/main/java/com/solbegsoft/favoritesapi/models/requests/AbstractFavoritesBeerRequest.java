@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @ToString
 @SuperBuilder
-public class AbstractFavoritesBeerRequest {
+public class AbstractFavoritesBeerRequest { // TODO: 05.09.2022 он абстрактный или нет?
 
     /**
      * Rate

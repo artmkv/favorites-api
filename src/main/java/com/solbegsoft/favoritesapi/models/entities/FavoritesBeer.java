@@ -37,7 +37,7 @@ public class FavoritesBeer {
      */
     @Id
     @Column(name = "beer_id")
-    private Long beerId;
+    private Long beerId;    // TODO: 05.09.2022 foreignApiBeerId
 
     /**
      * User Id

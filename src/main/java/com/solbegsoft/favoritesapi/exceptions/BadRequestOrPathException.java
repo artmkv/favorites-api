@@ -6,6 +6,7 @@ package com.solbegsoft.favoritesapi.exceptions;
  */
 public class BadRequestOrPathException extends RuntimeException{
 
+    // TODO: 05.09.2022 YAGNI!!!!!
     public BadRequestOrPathException() {
         super();
     }
@@ -14,6 +15,7 @@ public class BadRequestOrPathException extends RuntimeException{
         super(message);
     }
 
+    // TODO: 05.09.2022 YAGNI!!!!!
     public BadRequestOrPathException(String message, Throwable cause) {
         super(message, cause);
     }

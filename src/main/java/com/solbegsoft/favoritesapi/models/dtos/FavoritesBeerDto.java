@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FavoritesBeerDto {
+public class FavoritesBeerDto { // extends BaseRequestDto
 
     /**
      * ID
@@ -25,6 +25,7 @@ public class FavoritesBeerDto {
      */
     private Long beerId;
 
+    // TODO: 05.09.2022 у тебя же есть  BaseRequestDto
     /**
      * User Id
      */

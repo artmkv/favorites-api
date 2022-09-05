@@ -12,6 +12,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class UpdateRequestDto extends BaseRequestDto {
 
+    // TODO: 05.09.2022 Зачем объект, просто достань поля и кинь их сюда!
     /**
      * @see UpdateFavoritesBeerRequest
      */
