@@ -2,9 +2,6 @@ package com.solbegsoft.favoritesapi.models.requests;
 
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * Request model for Save Favorites beer
@@ -14,13 +11,26 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@SuperBuilder // TODO: 05.09.2022 ????????
-public class SaveFavoritesBeerRequest extends AbstractFavoritesBeerRequest{
+public class SaveFavoritesBeerRequest extends AbstractRequest {
 
     /**
-     * Beer ID
+     * name
      */
-    @NotNull
-    private Long beerId;
+    private String name;
+
+    /**
+     * ABV
+     */
+    private double abv;
+
+    /**
+     * IBU
+     */
+    private double ibu;
+
+    /**
+     * EBC
+     */
+    private double ebc;
 
 }

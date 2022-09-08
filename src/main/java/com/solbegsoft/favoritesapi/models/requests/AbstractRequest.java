@@ -2,7 +2,6 @@ package com.solbegsoft.favoritesapi.models.requests;
 
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.NotNull;
@@ -15,8 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@SuperBuilder
-public class AbstractFavoritesBeerRequest { // TODO: 05.09.2022 он абстрактный или нет?
+public abstract class AbstractRequest {
 
     /**
      * Rate
@@ -24,4 +22,10 @@ public class AbstractFavoritesBeerRequest { // TODO: 05.09.2022 он абстр�
     @NotNull
     @DecimalMax(value = "5")
     private Integer rate;
+
+    /**
+     * Beer ID
+     */
+    @NotNull
+    private Long foreignBeerApiId;
 }

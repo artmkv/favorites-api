@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi.models.dtos;
+package com.solbegsoft.favoritesapi.models.requests.dtos;
 
 
 import lombok.Data;
@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 @Data
 @SuperBuilder
-public class GetRequestDto extends BaseRequestDto{
+public class GetRequestDto extends BaseRequestDto {
 
     /**
      * FavoritesBeer ID

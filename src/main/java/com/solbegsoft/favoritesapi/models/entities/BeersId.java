@@ -27,18 +27,18 @@ public class BeersId implements Serializable {
     /**
      * ID from Beers_API
      */
-    private Long beerId;
+    private Long foreignBeerApiId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BeersId beersId = (BeersId) o;
-        return Objects.equals(id, beersId.id) && Objects.equals(beerId, beersId.beerId);
+        return Objects.equals(id, beersId.id) && Objects.equals(foreignBeerApiId, beersId.foreignBeerApiId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, beerId);
+        return Objects.hash(id, foreignBeerApiId);
     }
 }

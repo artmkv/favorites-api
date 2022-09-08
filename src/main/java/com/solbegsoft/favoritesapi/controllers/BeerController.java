@@ -2,12 +2,14 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
-import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.services.BeerService;
-import com.solbegsoft.favoritesapi.utils.RequestFavoritesBeerToRequestDtoConverter;
+import com.solbegsoft.favoritesapi.utils.RequestBeerConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.ap.internal.util.Collections;
@@ -39,12 +41,6 @@ public class BeerController {
     private final BeerService beerService;
 
     /**
-     * Converter
-     */
-    private final RequestFavoritesBeerToRequestDtoConverter converter; // TODO: 05.09.2022
-
-
-    /**
      * Get All favorites beers by userId
      *
      * @param page   page for pagination
@@ -63,12 +59,13 @@ public class BeerController {
                                                                 @RequestHeader(value = "userId", required = false) UUID userId
     ) {
         log.info("#GET: Get all beers by userId {}, rate {}", userId, rate);
-        Page<FavoritesBeerDto> favorites = beerService.getAllBeersByRate(
-                converter.getInstance().convertToGetRequestDto(
-                        userId,
-                        Collections.asSet(rate),
-                        PageRequest.of(page, size, Sort.by(order)))
-        );
+
+        GetRequestDto requestDto = RequestBeerConverter.INSTANCE.convertToGetRequestDto(
+                userId,
+                Collections.asSet(rate),
+                PageRequest.of(page, size, Sort.by(order)));
+        Page<FavoritesBeerDto> favorites = beerService.getAllBeersByRate(requestDto);
+
         log.info("#GET: Success get all beers by userId {}, rate {}", userId, rate);
 
         return new ResponseApi<>(favorites);
@@ -105,9 +102,12 @@ public class BeerController {
     public ResponseApi<FavoritesBeerDto> saveBeerFavorites(@RequestBody @Valid SaveFavoritesBeerRequest request,
                                                            @RequestHeader UUID userId
     ) {
-        log.info("#POST: userId {}, beerID {}", userId, request.getBeerId());
-        FavoritesBeerDto result = beerService.saveFavoriteBeer(converter.convertToSaveRequestDto(userId, request));
-        log.info("#POST: Save success with userId {}, beerID {}", userId, request.getBeerId());
+        log.info("#POST: userId {}, beerID {}", userId, request.getForeignBeerApiId());
+
+        SaveRequestDto saveRequestDto = RequestBeerConverter.INSTANCE.convertToSaveRequestDto(userId, request);
+        FavoritesBeerDto result = beerService.saveFavoriteBeer(saveRequestDto);
+
+        log.info("#POST: Save success with userId {}, beerID {}", userId, request.getForeignBeerApiId());
 
         return new ResponseApi<>(result);
     }
@@ -128,10 +128,10 @@ public class BeerController {
     ) {
 
         log.info("#PATCH: userId {}, beerID {}", userId, id);
-        // TODO: 05.09.2022 эмм... converter.getInstance().convertToUpdateRequestDto не проще ли converter.convertToUpdateRequestDto ????
-        FavoritesBeerDto result = beerService.updateFavoriteBeer(
-                converter.getInstance().convertToUpdateRequestDto(userId, id, request) // TODO: 05.09.2022 пример KISS не надо так делать, вынеси в отдельную переменную
-        );
+
+        UpdateRequestDto updateRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, request);
+        FavoritesBeerDto result = beerService.updateFavoriteBeer(updateRequestDto);
+
         log.info("#PATCH: updated success userId {}, beerID {}", userId, id);
 
         return new ResponseApi<>(result);
@@ -153,12 +153,8 @@ public class BeerController {
     ) {
         log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
-        // TODO: 05.09.2022 не надо пытаться запихнуть ну так же легче читается:
-        UpdateRequestDto requestDto111 = converter.convertToUpdateRequestDto(userId, id, rate);
-        FavoritesBeerDto favoritesBeer111 = beerService.updateRateFavoritesBeer(requestDto111);
-        // TODO: 05.09.2022
-        FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(
-                converter.getInstance().convertToUpdateRequestDto(userId, id, rate));
+        UpdateRequestDto updateRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, rate);
+        FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(updateRequestDto);
 
         log.info("#PATCH: updated success userId {}, beerUUID {}", userId, id);
 

@@ -2,13 +2,15 @@ package com.solbegsoft.favoritesapi.services;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
-import com.solbegsoft.favoritesapi.models.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
-import com.solbegsoft.favoritesapi.utils.ExceptionMessagesConstant;
+import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
+import com.solbegsoft.favoritesapi.utils.MessageUtils;
+import com.solbegsoft.favoritesapi.utils.UpdateRequestEntityConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,12 +34,17 @@ public class BeerServiceImpl implements BeerService {
      */
     private final BeerRepository beerRepository;
 
+    /**
+     * @see MessageUtils
+     */
+    private final MessageUtils messages;
+
     @Override
     public FavoritesBeerDto getBeerById(UUID userId, UUID id) {
 
         return beerRepository.findOneBeerById(userId, id)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ExceptionMessagesConstant.ENTITY_NOT_FOUND, id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
     }
 
     @Override
@@ -56,62 +63,52 @@ public class BeerServiceImpl implements BeerService {
     public void deleteFavoriteBeer(UUID userId, UUID id) {
 
         FavoritesBeer result = beerRepository.findOneBeerById(userId, id)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        String.format(ExceptionMessagesConstant.ENTITY_NOT_FOUND, id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
+
         beerRepository.deleteOne(result.getUserId(), result.getId());
     }
 
     @Override
     public FavoritesBeerDto updateRateFavoritesBeer(UpdateRequestDto requestDto) {
-        UUID id = requestDto.getRequestFavoritesBeer().getId();
+        UUID id = requestDto.getId();
         UUID userId = requestDto.getUserId();
-        beerRepository.updateRateFavoriteBeer(requestDto);
+        beerRepository.updateRateFavoritesBeer(requestDto);
 
         return beerRepository.findOneBeerById(userId, id)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ExceptionMessagesConstant.ENTITY_NOT_FOUND, id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
     }
 
     @Override
     public FavoritesBeerDto updateFavoriteBeer(UpdateRequestDto requestDto) {
 
-        UUID id = requestDto.getRequestFavoritesBeer().getId();
+        UUID id = requestDto.getId();
+        UUID userId = requestDto.getUserId();
+        beerRepository.findOneBeerById(userId, id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
 
-        FavoritesBeer favoritesBeer = beerRepository.findOneBeerById(requestDto.getUserId(), id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ExceptionMessagesConstant.ENTITY_NOT_FOUND, id)));
+        FavoritesBeer entity = UpdateRequestEntityConverter.INSTANCE.convertRequestToFavoritesBeer(requestDto);
+        beerRepository.updateFavoritesBeer(entity);
 
-        updateFavoritesBeerFromRequest(requestDto, favoritesBeer);
-        beerRepository.updateFavoriteBeer(favoritesBeer);
-        return FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(favoritesBeer);
+        return beerRepository.findOneBeerById(userId, id)
+                .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
+                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
     }
-
 
     @Override
     public FavoritesBeerDto saveFavoriteBeer(SaveRequestDto requestDto) {
 
         UUID userId = requestDto.getUserId();
-        Long beerId = requestDto.getRequestFavoritesBeer().getBeerId();
+        Long beerId = requestDto.getForeignBeerApiId();
 
         if (beerRepository.findByUserAndBeer(userId, beerId).isPresent()) {
-            throw new EntityExistsException(String.format(ExceptionMessagesConstant.ENTITY_ALREADY_EXIST, beerId));
+            throw new EntityExistsException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_ALREADY_EXIST), beerId));
         }
         beerRepository.saveFavoritesBeer(requestDto);
 
         return beerRepository.findByUserAndBeer(userId, beerId)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(ExceptionMessagesConstant.ENTITY_NOT_FOUND, beerId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), beerId)));
     }
 
-    // TODO: 05.09.2022 конвертер?
-    private static void updateFavoritesBeerFromRequest(UpdateRequestDto request, FavoritesBeer favoritesBeer) {
-
-        FavoritesBeerDto dto = FavoritesBeerDto.builder()
-                .id(request.getRequestFavoritesBeer().getId())
-                .userId(request.getUserId())
-                .beerId(request.getRequestFavoritesBeer().getBeerId())
-                .rate(request.getRequestFavoritesBeer().getRate())
-                .build();
-
-        FavoritesBeerConverter.INSTANCE.updateFavoritesBeerFromDto(dto, favoritesBeer); // TODO: 05.09.2022 ??????
-    }
 }

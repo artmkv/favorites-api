@@ -2,7 +2,6 @@ package com.solbegsoft.favoritesapi.models.requests;
 
 
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
@@ -15,8 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@SuperBuilder
-public class UpdateFavoritesBeerRequest extends AbstractFavoritesBeerRequest{
+public class UpdateFavoritesBeerRequest extends AbstractRequest {
 
     /**
      * ID
@@ -25,9 +23,23 @@ public class UpdateFavoritesBeerRequest extends AbstractFavoritesBeerRequest{
     private UUID id;
 
     /**
-     * beer ID
+     * name
      */
-    @NotNull
-    private Long beerId;
+    private String name;
+
+    /**
+     * ABV
+     */
+    private double abv;
+
+    /**
+     * IBU
+     */
+    private double ibu;
+
+    /**
+     * EBC
+     */
+    private double ebc;
 
 }

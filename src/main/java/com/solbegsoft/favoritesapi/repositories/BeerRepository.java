@@ -1,10 +1,10 @@
 package com.solbegsoft.favoritesapi.repositories;
 
 
-import com.solbegsoft.favoritesapi.models.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -38,21 +38,21 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     void deleteOne(UUID userId, UUID uuid);
 
     @Modifying
-    @Query("update FavoritesBeer b set b.rate = :#{#dto.requestFavoritesBeer.rate} " +
-            "where b.id = :#{#dto.requestFavoritesBeer.id} and b.userId = :#{#dto.userId}")
-    void updateRateFavoriteBeer(@Param("dto") UpdateRequestDto dto);
+    @Query("update FavoritesBeer b set b.rate = :#{#dto.rate} " +
+            "where b.id = :#{#dto.id} and b.userId = :#{#dto.userId}")
+    void updateRateFavoritesBeer(@Param("dto") UpdateRequestDto dto);
 
     @Modifying
     @Query("update FavoritesBeer b set b = :#{#entity} where b.id = :#{#entity.id} and b.userId = :#{#entity.userId}")
-    void updateFavoriteBeer(@Param("entity") FavoritesBeer entity);
+    void updateFavoritesBeer(@Param("entity") FavoritesBeer entity);
 
-    @Modifying // TODO: 05.09.2022 возможно избыточно, проверить
+    @Modifying
     @Query(nativeQuery = true,
-            value = "insert into beers.favorites(user_id, beer_id, rate) " +
-                    "values(:#{#dto.userId}, :#{#dto.requestFavoritesBeer.beerId}, :#{#dto.requestFavoritesBeer.rate})")
+            value = "insert into favorites.favorites_beer(user_id, beer_api_id, rate, name, abv, ibu, ebc) " +
+                    "values(:#{#dto.userId}, :#{#dto.foreignBeerApiId}, :#{#dto.rate}, :#{#dto.name}, :#{#dto.abv}, :#{#dto.ibu}, :#{#dto.ebc})")
     void saveFavoritesBeer(@Param("dto") SaveRequestDto dto);
 
-    @Query("select b from FavoritesBeer b where b.userId = :#{#userId} and b.beerId = :#{#beerId}")
-    Optional<FavoritesBeer> findByUserAndBeer(UUID userId, Long beerId);
+    @Query("select b from FavoritesBeer b where b.userId = :#{#userId} and b.foreignBeerApiId = :#{#foreignBeerApiId}")
+    Optional<FavoritesBeer> findByUserAndBeer(UUID userId, Long foreignBeerApiId);
 
 }

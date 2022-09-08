@@ -2,9 +2,9 @@ package com.solbegsoft.favoritesapi.services;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
-import com.solbegsoft.favoritesapi.models.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.dtos.UpdateRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;

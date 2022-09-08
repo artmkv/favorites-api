@@ -29,11 +29,11 @@ public class FavoritesApiExceptionHandler {
         return new ResponseApi<>(e.getMessage());
     }
 
-    // TODO: 05.09.2022
     /**
      * Handle {@link org.springframework.web.client.HttpClientErrorException.BadRequest}
-     * @param e ?????
-     * @return ?????
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
      */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestOrPathException.class)
@@ -44,6 +44,7 @@ public class FavoritesApiExceptionHandler {
 
     /**
      * Handle {@link RuntimeException}
+     *
      * @param e exception
      * @return {@link ResponseApi}
      */
