@@ -5,7 +5,7 @@ import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
 
 /**
- * Request to Entity Converter
+ * Converter Request and {@link FavoritesBeer}
  */
 public class UpdateRequestEntityConverter {
 

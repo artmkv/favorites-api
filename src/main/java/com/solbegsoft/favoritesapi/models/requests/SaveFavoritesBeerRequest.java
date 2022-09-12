@@ -3,6 +3,8 @@ package com.solbegsoft.favoritesapi.models.requests;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * Request model for Save Favorites beer
  */
@@ -14,23 +16,27 @@ import lombok.*;
 public class SaveFavoritesBeerRequest extends AbstractRequest {
 
     /**
-     * name
+     * Name
      */
+    @NotBlank
     private String name;
 
     /**
      * ABV
      */
+    @NotBlank
     private double abv;
 
     /**
      * IBU
      */
+    @NotBlank
     private double ibu;
 
     /**
      * EBC
      */
+    @NotBlank
     private double ebc;
 
 }

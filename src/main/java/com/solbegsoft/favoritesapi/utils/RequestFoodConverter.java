@@ -6,15 +6,28 @@ import com.solbegsoft.favoritesapi.models.requests.SaveFoodRequest;
 
 import java.util.UUID;
 
+/**
+ * Converter Request Food
+ */
 public class RequestFoodConverter {
 
+    /**
+     * Instance
+     */
     public static final RequestFoodConverter INSTANCE = new RequestFoodConverter();
 
-    public FavoritesFoodDto getFoodDtoFromRequest(UUID userId, Long foreignBeerApiId, SaveFoodRequest request){
+    /**
+     * Convert Request parameters to {@link FavoritesFoodDto}
+     *
+     * @param userId  User Id
+     * @param request {@link SaveFoodRequest}
+     * @return {@link FavoritesFoodDto}
+     */
+    public FavoritesFoodDto getFoodDtoFromRequest(UUID userId, SaveFoodRequest request) {
 
         return FavoritesFoodDto.builder()
                 .userId(userId)
-                .foreignBeerApiId(foreignBeerApiId)
+                .foreignBeerApiId(request.getForeignBeerApiId())
                 .rate(request.getRate())
                 .text(request.getText())
                 .build();

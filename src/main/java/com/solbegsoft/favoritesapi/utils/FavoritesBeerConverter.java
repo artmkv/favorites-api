@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
- * Converter Favorites Beer
+ * Converter for {@link FavoritesBeer} and {@link FavoritesBeerDto}
  */
 @Mapper(componentModel = "spring")
 public interface FavoritesBeerConverter {
@@ -17,8 +17,20 @@ public interface FavoritesBeerConverter {
      */
     FavoritesBeerConverter INSTANCE = Mappers.getMapper(FavoritesBeerConverter.class);
 
+    /**
+     * Convert {@link FavoritesBeer} to {@link FavoritesBeerDto}
+     *
+     * @param favoritesBeer {@link FavoritesBeer}
+     * @return {@link FavoritesBeerDto}
+     */
     FavoritesBeerDto toDtoFromFavoritesBeer(FavoritesBeer favoritesBeer);
 
+    /**
+     * Convert {@link FavoritesBeerDto} to {@link FavoritesBeer}
+     *
+     * @param favoritesBeerDto {@link FavoritesBeerDto}
+     * @return {@link FavoritesBeer}
+     */
     FavoritesBeer toFavoritesBeerFromDto(FavoritesBeerDto favoritesBeerDto);
 
 }

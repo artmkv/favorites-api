@@ -3,6 +3,7 @@ package com.solbegsoft.favoritesapi.models.requests;
 
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
@@ -25,21 +26,25 @@ public class UpdateFavoritesBeerRequest extends AbstractRequest {
     /**
      * name
      */
+    @NotBlank
     private String name;
 
     /**
      * ABV
      */
+    @NotBlank
     private double abv;
 
     /**
      * IBU
      */
+    @NotBlank
     private double ibu;
 
     /**
      * EBC
      */
+    @NotBlank
     private double ebc;
 
 }

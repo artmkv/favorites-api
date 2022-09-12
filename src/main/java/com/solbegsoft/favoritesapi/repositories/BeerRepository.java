@@ -25,17 +25,17 @@ import java.util.UUID;
 public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#dto.userId}")
-    Page<FavoritesBeer> getAllWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
+    Page<FavoritesBeer> findAllWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#dto.userId} and b.rate in :#{#dto.rate}")
-    Page<FavoritesBeer> getAllBySetRatesWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
+    Page<FavoritesBeer> findAllBySetRatesWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
 
     @Query("select b from FavoritesBeer b where b.userId = ?1 and b.id = ?2")
     Optional<FavoritesBeer> findOneBeerById(UUID userId, UUID id);
 
     @Modifying
     @Query("delete from FavoritesBeer b where b.userId = ?1 and b.id = ?2")
-    void deleteOne(UUID userId, UUID uuid);
+    void deleteOne(UUID userId, UUID id);
 
     @Modifying
     @Query("update FavoritesBeer b set b.rate = :#{#dto.rate} " +

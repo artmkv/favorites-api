@@ -31,11 +31,6 @@ public class FoodController {
     private final FoodService foodService;
 
     /**
-     * @see RequestFoodConverter
-     */
-    private final RequestFoodConverter converter;
-
-    /**
      * Get All Favorites Food
      *
      * @param userId User ID
@@ -43,7 +38,7 @@ public class FoodController {
      */
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<List<FavoritesFoodDto>> getListFoodFavorites(@RequestHeader UUID userId) {
+    public ResponseApi<List<FavoritesFoodDto>> getListFavoritesFood(@RequestHeader UUID userId) {
 
         log.info("#GET: Get all foods by userId {}", userId);
         List<FavoritesFoodDto> result = foodService.getListOfFood(userId);
@@ -56,15 +51,17 @@ public class FoodController {
      * Get List of Food by text
      *
      * @param userId User ID
-     * @param word   text
+     * @param text   text
      * @return List of {@link FavoritesFoodDto}
      */
-    @GetMapping("/word")
+    @GetMapping("/text")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<List<FavoritesFoodDto>> getFoodFavoritesByString(@RequestHeader UUID userId,
-                                                                        @RequestParam String word
+    public ResponseApi<List<FavoritesFoodDto>> getFavoritesFoodByString(@RequestHeader UUID userId,
+                                                                        @RequestParam String text
     ) {
-        List<FavoritesFoodDto> result = foodService.getListOfFoodByString(userId, word);
+        log.info("#GET: Get all foods by userId {} and by string {}", userId, text);
+        List<FavoritesFoodDto> result = foodService.getListOfFoodByString(userId, text);
+        log.info("#GET: Success get all foods by userId {} and by string {}", userId, text);
 
         return new ResponseApi<>(result);
     }
@@ -73,19 +70,18 @@ public class FoodController {
      * Save Favorites Food
      *
      * @param userId  User ID
-     * @param beerId  Foreign Beer Api ID
      * @param request {@link SaveFoodRequest}
      * @return {@link FavoritesFoodDto}
      */
-    @PostMapping("/{id}")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseApi<FavoritesFoodDto> saveFoodFavorites(@RequestHeader UUID userId,
-                                                           @PathVariable("id") Long beerId,
+    public ResponseApi<FavoritesFoodDto> saveFavoritesFood(@RequestHeader UUID userId,
                                                            @RequestBody SaveFoodRequest request
     ) {
-
-        FavoritesFoodDto favoritesFoodDto = converter.getFoodDtoFromRequest(userId, beerId, request);
+        log.info("#POST: Save food by userId {} and by beerId {}", userId, request.getForeignBeerApiId());
+        FavoritesFoodDto favoritesFoodDto = RequestFoodConverter.INSTANCE.getFoodDtoFromRequest(userId, request);
         FavoritesFoodDto result = foodService.saveOneFavoritesFood(favoritesFoodDto);
+        log.info("#POST: Success save food by userId {} and by beerId {}", userId, request.getForeignBeerApiId());
 
         return new ResponseApi<>(result);
     }
@@ -99,13 +95,13 @@ public class FoodController {
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public ResponseApi<Boolean> deleteOneFavoritesFood(@PathVariable("id") UUID id,
-                                                       @RequestHeader UUID userId
+    public ResponseApi<Boolean> deleteFavoritesFood(@PathVariable("id") UUID id,
+                                                    @RequestHeader UUID userId
     ) {
 
         log.info("#DELETE: userId {}, Id {}", userId, id);
         foodService.deleteFavoritesFood(userId, id);
-        log.info("#DELETE: deleted success userId {}, Id {}", userId, id);
+        log.info("#DELETE: deleted success. UserId {}, Id {}", userId, id);
 
         return new ResponseApi<>(true);
     }

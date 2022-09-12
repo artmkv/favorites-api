@@ -2,13 +2,13 @@ package com.solbegsoft.favoritesapi.services;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
+import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
 import com.solbegsoft.favoritesapi.repositories.FoodRepository;
 import com.solbegsoft.favoritesapi.utils.FavoritesFoodConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class FoodServiceImpl implements FoodService{
+public class FoodServiceImpl implements FoodService {
 
     /**
      * @see FoodRepository
@@ -36,17 +36,26 @@ public class FoodServiceImpl implements FoodService{
 
     @Override
     public List<FavoritesFoodDto> getListOfFoodByString(UUID userId, String maybeFood) {
-        return new ArrayList<>();
+
+        String string = "%" + maybeFood.toLowerCase() + "%";
+
+        return repository.getAllFavoritesFoodByString(userId, string).stream()
+                .map(FavoritesFoodConverter.INSTANCE::getDtoFromFavoritesFood)
+                .collect(Collectors.toList());
     }
 
     @Override
     public FavoritesFoodDto saveOneFavoritesFood(FavoritesFoodDto dto) {
 
-        return new FavoritesFoodDto();
+        FavoritesFood entity = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(dto);
+        FavoritesFood save = repository.save(entity);
+
+        return FavoritesFoodConverter.INSTANCE.getDtoFromFavoritesFood(save);
     }
 
     @Override
     public void deleteFavoritesFood(UUID userId, UUID id) {
 
+        repository.deleteOne(userId, id);
     }
 }

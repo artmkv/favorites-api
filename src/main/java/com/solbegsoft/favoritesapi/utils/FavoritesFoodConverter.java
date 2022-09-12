@@ -7,12 +7,29 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 /**
- * Favorites Food Converter
+ * Converter for {@link FavoritesFood} and {@link FavoritesFoodDto}
  */
 @Mapper(componentModel = "spring")
 public interface FavoritesFoodConverter {
 
+    /**
+     * Instance
+     */
     FavoritesFoodConverter INSTANCE = Mappers.getMapper(FavoritesFoodConverter.class);
 
+    /**
+     * Convert {@link FavoritesFood} to {@link FavoritesFoodDto}
+     *
+     * @param favoritesFood {@link FavoritesFood}
+     * @return {@link FavoritesFoodDto}
+     */
     FavoritesFoodDto getDtoFromFavoritesFood(FavoritesFood favoritesFood);
+
+    /**
+     * Convert {@link FavoritesFoodDto} to {@link FavoritesFood}
+     *
+     * @param favoritesFoodDto {@link @FavoritesF}
+     * @return {@link FavoritesFood}
+     */
+    FavoritesFood getFavoritesFoodFromDto(FavoritesFoodDto favoritesFoodDto);
 }

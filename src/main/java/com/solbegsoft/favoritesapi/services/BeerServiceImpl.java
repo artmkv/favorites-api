@@ -1,13 +1,13 @@
 package com.solbegsoft.favoritesapi.services;
 
 
+import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
-import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
 import com.solbegsoft.favoritesapi.utils.UpdateRequestEntityConverter;
@@ -52,10 +52,10 @@ public class BeerServiceImpl implements BeerService {
 
         if (Objects.isNull(getRequestDto.getRate()) || getRequestDto.getRate().isEmpty()) {
 
-            return beerRepository.getAllWithPagination(getRequestDto, getRequestDto.getPageable())
+            return beerRepository.findAllWithPagination(getRequestDto, getRequestDto.getPageable())
                     .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer);
         }
-        return beerRepository.getAllBySetRatesWithPagination(getRequestDto, getRequestDto.getPageable())
+        return beerRepository.findAllBySetRatesWithPagination(getRequestDto, getRequestDto.getPageable())
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer);
     }
 

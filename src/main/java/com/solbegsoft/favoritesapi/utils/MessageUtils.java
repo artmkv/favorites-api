@@ -19,6 +19,8 @@ public class MessageUtils {
     private final MessageSource messageSource;
 
     /**
+     * Get message
+     *
      * @param code code from localized resource bundle
      * @return String
      */
