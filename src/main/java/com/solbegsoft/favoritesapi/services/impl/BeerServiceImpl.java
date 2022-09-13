@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi.services;
+package com.solbegsoft.favoritesapi.services.impl;
 
 
 import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
@@ -8,6 +8,7 @@ import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
+import com.solbegsoft.favoritesapi.services.BeerService;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
 import com.solbegsoft.favoritesapi.utils.UpdateBeerRequestEntityConverter;

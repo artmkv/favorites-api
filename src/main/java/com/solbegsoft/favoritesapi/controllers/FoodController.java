@@ -2,7 +2,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
-import com.solbegsoft.favoritesapi.models.requests.SaveFoodRequest;
+import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesFoodRequest;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.services.FoodService;
@@ -55,13 +55,13 @@ public class FoodController {
      * Save Favorites Food
      *
      * @param userId  User ID
-     * @param request {@link SaveFoodRequest}
+     * @param request {@link SaveFavoritesFoodRequest}
      * @return {@link FavoritesFoodDto}
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseApi<FavoritesFoodDto> saveFavoritesFood(@RequestHeader UUID userId,
-                                                           @RequestBody SaveFoodRequest request
+                                                           @RequestBody SaveFavoritesFoodRequest request
     ) {
         log.info("#POST: Save food by userId {} and by beerId {}", userId, request.getForeignBeerApiId());
         FavoritesFoodDto favoritesFoodDto = RequestFoodConverter.INSTANCE.getFoodDtoFromRequest(userId, request);

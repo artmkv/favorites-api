@@ -39,9 +39,9 @@ public class BeerAndFoodController {
     public ResponseApi<ResponseBeerWithFood> getBeerFavoritesById(@PathVariable("id") UUID id,
                                                                   @RequestHeader UUID userId
     ) {
-        log.info("#GET: Get beer with food by userId {}, ID {}", userId, id);
+        log.info("#GET: Get beer with food by userId {}, ID of beer {}", userId, id);
         ResponseBeerWithFood result = beerAndFoodService.getBeerByIdWithFood(userId, id);
-        log.info("#GET: Success get beer with food by userId {}, ID {}", userId, id);
+        log.info("#GET: Success get beer with food by userId {}, ID of beer  {}", userId, id);
 
         return new ResponseApi<>(result);
     }

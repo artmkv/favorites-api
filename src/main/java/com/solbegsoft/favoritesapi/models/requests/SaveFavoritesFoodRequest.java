@@ -13,7 +13,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class SaveFoodRequest extends AbstractRequest{
+public class SaveFavoritesFoodRequest extends AbstractRequest{
 
     /**
      * Description of food

@@ -2,7 +2,7 @@ package com.solbegsoft.favoritesapi.utils;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
-import com.solbegsoft.favoritesapi.models.requests.SaveFoodRequest;
+import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesFoodRequest;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
 
 import java.util.UUID;
@@ -21,10 +21,10 @@ public class RequestFoodConverter {
      * Convert Request parameters to {@link FavoritesFoodDto}
      *
      * @param userId  User Id
-     * @param request {@link SaveFoodRequest}
+     * @param request {@link SaveFavoritesFoodRequest}
      * @return {@link FavoritesFoodDto}
      */
-    public FavoritesFoodDto getFoodDtoFromRequest(UUID userId, SaveFoodRequest request) {
+    public FavoritesFoodDto getFoodDtoFromRequest(UUID userId, SaveFavoritesFoodRequest request) {
 
         return FavoritesFoodDto.builder()
                 .userId(userId)
@@ -34,7 +34,14 @@ public class RequestFoodConverter {
                 .build();
     }
 
-    public GetFoodRequestDto convertToGetFoodRequestDto(UUID userId, String string){
+    /**
+     * Convert Request parameters to {@link FavoritesFoodDto}
+     *
+     * @param userId UserId
+     * @param string Search string
+     * @return {@link GetFoodRequestDto}
+     */
+    public GetFoodRequestDto convertToGetFoodRequestDto(UUID userId, String string) {
         return GetFoodRequestDto.builder()
                 .userId(userId)
                 .text(string)

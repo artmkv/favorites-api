@@ -1,10 +1,11 @@
-package com.solbegsoft.favoritesapi.services;
+package com.solbegsoft.favoritesapi.services.impl;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
 import com.solbegsoft.favoritesapi.repositories.FoodRepository;
+import com.solbegsoft.favoritesapi.services.FoodService;
 import com.solbegsoft.favoritesapi.utils.FavoritesFoodConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi.services;
+package com.solbegsoft.favoritesapi.services.impl;
 
 
 import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
@@ -7,6 +7,7 @@ import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.response.ResponseBeerWithFood;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
 import com.solbegsoft.favoritesapi.repositories.FoodRepository;
+import com.solbegsoft.favoritesapi.services.BeerAndFoodService;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
 import com.solbegsoft.favoritesapi.utils.FavoritesFoodConverter;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Repository
 @RequiredArgsConstructor
-public class BeerAndFoodServiceImpl implements BeerAndFoodService{
+public class BeerAndFoodServiceImpl implements BeerAndFoodService {
 
     /**
      * @see BeerRepository

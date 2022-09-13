@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Favorites food Entity
+ * Entity Favorites food
  */
 @Getter
 @Setter

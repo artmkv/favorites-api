@@ -47,8 +47,8 @@ public class BeerController {
      * @param size   size of page for pagination
      * @param order  sorting by
      * @param rate   rating beers
-     * @param userId user ID
-     * @return {@link ResponseApi with List Favorites Beer}
+     * @param userId User ID
+     * @return {@link ResponseApi}
      */
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
@@ -76,7 +76,7 @@ public class BeerController {
      *
      * @param id     Favorites beer ID
      * @param userId user ID
-     * @return {@link Optional} of favorites beers
+     * @return {@link Optional} of Favorites beers
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
