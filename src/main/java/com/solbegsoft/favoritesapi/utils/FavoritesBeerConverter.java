@@ -4,6 +4,7 @@ package com.solbegsoft.favoritesapi.utils;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 /**
@@ -26,11 +27,11 @@ public interface FavoritesBeerConverter {
     FavoritesBeerDto toDtoFromFavoritesBeer(FavoritesBeer favoritesBeer);
 
     /**
-     * Convert {@link FavoritesBeerDto} to {@link FavoritesBeer}
+     * Update Model
      *
      * @param favoritesBeerDto {@link FavoritesBeerDto}
-     * @return {@link FavoritesBeer}
+     * @param favoritesBeer    {@link FavoritesBeer}
      */
-    FavoritesBeer toFavoritesBeerFromDto(FavoritesBeerDto favoritesBeerDto);
+    void updateModel(FavoritesBeerDto favoritesBeerDto, @MappingTarget FavoritesBeer favoritesBeer);
 
 }

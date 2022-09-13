@@ -3,6 +3,7 @@ package com.solbegsoft.favoritesapi.utils;
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.requests.SaveFoodRequest;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
 
 import java.util.UUID;
 
@@ -30,6 +31,13 @@ public class RequestFoodConverter {
                 .foreignBeerApiId(request.getForeignBeerApiId())
                 .rate(request.getRate())
                 .text(request.getText())
+                .build();
+    }
+
+    public GetFoodRequestDto convertToGetFoodRequestDto(UUID userId, String string){
+        return GetFoodRequestDto.builder()
+                .userId(userId)
+                .text(string)
                 .build();
     }
 }

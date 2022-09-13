@@ -3,6 +3,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.requests.SaveFoodRequest;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.services.FoodService;
 import com.solbegsoft.favoritesapi.utils.RequestFoodConverter;
@@ -31,37 +32,21 @@ public class FoodController {
     private final FoodService foodService;
 
     /**
-     * Get All Favorites Food
-     *
-     * @param userId User ID
-     * @return List of Favorites Food
-     */
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<List<FavoritesFoodDto>> getListFavoritesFood(@RequestHeader UUID userId) {
-
-        log.info("#GET: Get all foods by userId {}", userId);
-        List<FavoritesFoodDto> result = foodService.getListOfFood(userId);
-        log.info("#GET: Success get all foods by userId {}", userId);
-
-        return new ResponseApi<>(result);
-    }
-
-    /**
      * Get List of Food by text
      *
      * @param userId User ID
-     * @param text   text
+     * @param search text to search
      * @return List of {@link FavoritesFoodDto}
      */
-    @GetMapping("/text")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseApi<List<FavoritesFoodDto>> getFavoritesFoodByString(@RequestHeader UUID userId,
-                                                                        @RequestParam String text
+                                                                        @RequestParam(required = false) String search
     ) {
-        log.info("#GET: Get all foods by userId {} and by string {}", userId, text);
-        List<FavoritesFoodDto> result = foodService.getListOfFoodByString(userId, text);
-        log.info("#GET: Success get all foods by userId {} and by string {}", userId, text);
+        log.info("#GET: Get all foods by userId {} and by string {}", userId, search);
+        GetFoodRequestDto requestDto = RequestFoodConverter.INSTANCE.convertToGetFoodRequestDto(userId, search);
+        List<FavoritesFoodDto> result = foodService.getListOfFoodByString(requestDto);
+        log.info("#GET: Success get all foods by userId {} and by string {}", userId, search);
 
         return new ResponseApi<>(result);
     }
@@ -89,7 +74,7 @@ public class FoodController {
     /**
      * Delete One Favorites Food
      *
-     * @param id ID of Favorites Food
+     * @param id     ID of Favorites Food
      * @param userId User ID
      * @return boolean
      */
@@ -103,6 +88,6 @@ public class FoodController {
         foodService.deleteFavoritesFood(userId, id);
         log.info("#DELETE: deleted success. UserId {}, Id {}", userId, id);
 
-        return new ResponseApi<>(true);
+        return new ResponseApi<>(Boolean.TRUE);
     }
 }

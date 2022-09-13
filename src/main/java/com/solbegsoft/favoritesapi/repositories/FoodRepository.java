@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Food repository
+ */
 @Repository
 @Transactional
 public interface FoodRepository extends JpaRepository<FavoritesFood, UUID> {
@@ -18,7 +21,7 @@ public interface FoodRepository extends JpaRepository<FavoritesFood, UUID> {
     @Query(value = "select f from FavoritesFood f where f.userId = ?1")
     List<FavoritesFood> getAllFavoritesFood(UUID userId);
 
-    @Query(value = "select f from FavoritesFood f where f.userId = ?1 and f.text like ?2")
+    @Query(value = "select f from FavoritesFood f where f.userId = ?1 and lower(f.text) like ?2")
     List<FavoritesFood> getAllFavoritesFoodByString(UUID userId, String str);
 
     @Query(value = "select f from FavoritesFood f where f.userId = ?1 and f.foreignBeerApiId = ?2")

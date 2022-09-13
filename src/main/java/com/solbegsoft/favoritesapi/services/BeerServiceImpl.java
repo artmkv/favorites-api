@@ -4,13 +4,13 @@ package com.solbegsoft.favoritesapi.services;
 import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
-import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
-import com.solbegsoft.favoritesapi.utils.UpdateRequestEntityConverter;
+import com.solbegsoft.favoritesapi.utils.UpdateBeerRequestEntityConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -48,7 +48,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public Page<FavoritesBeerDto> getAllBeersByRate(GetRequestDto getRequestDto) {
+    public Page<FavoritesBeerDto> getAllBeersByRate(GetBeerRequestDto getRequestDto) {
 
         if (Objects.isNull(getRequestDto.getRate()) || getRequestDto.getRate().isEmpty()) {
 
@@ -69,7 +69,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public FavoritesBeerDto updateRateFavoritesBeer(UpdateRequestDto requestDto) {
+    public FavoritesBeerDto updateRateFavoritesBeer(UpdateBeerRequestDto requestDto) {
         UUID id = requestDto.getId();
         UUID userId = requestDto.getUserId();
         beerRepository.updateRateFavoritesBeer(requestDto);
@@ -80,15 +80,17 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public FavoritesBeerDto updateFavoriteBeer(UpdateRequestDto requestDto) {
+    public FavoritesBeerDto updateFavoriteBeer(UpdateBeerRequestDto requestDto) {
 
         UUID id = requestDto.getId();
         UUID userId = requestDto.getUserId();
-        beerRepository.findOneBeerById(userId, id)
+        FavoritesBeer favoritesBeer = beerRepository.findOneBeerById(userId, id)
                 .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
 
-        FavoritesBeer entity = UpdateRequestEntityConverter.INSTANCE.convertRequestToFavoritesBeer(requestDto);
-        beerRepository.updateFavoritesBeer(entity);
+        FavoritesBeerDto favoritesBeerDto = UpdateBeerRequestEntityConverter.INSTANCE.convertRequestToFavoritesBeer(requestDto);
+        FavoritesBeerConverter.INSTANCE.updateModel(favoritesBeerDto, favoritesBeer);
+
+        beerRepository.updateFavoritesBeer(favoritesBeer);
 
         return beerRepository.findOneBeerById(userId, id)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
@@ -96,7 +98,7 @@ public class BeerServiceImpl implements BeerService {
     }
 
     @Override
-    public FavoritesBeerDto saveFavoriteBeer(SaveRequestDto requestDto) {
+    public FavoritesBeerDto saveFavoriteBeer(SaveBeerRequestDto requestDto) {
 
         UUID userId = requestDto.getUserId();
         Long beerId = requestDto.getForeignBeerApiId();

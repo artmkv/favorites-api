@@ -28,7 +28,7 @@ public interface FavoritesFoodConverter {
     /**
      * Convert {@link FavoritesFoodDto} to {@link FavoritesFood}
      *
-     * @param favoritesFoodDto {@link @FavoritesF}
+     * @param favoritesFoodDto {@link FavoritesFoodDto}
      * @return {@link FavoritesFood}
      */
     FavoritesFood getFavoritesFoodFromDto(FavoritesFoodDto favoritesFoodDto);

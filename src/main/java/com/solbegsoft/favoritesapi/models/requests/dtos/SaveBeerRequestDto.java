@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @Data
 @SuperBuilder
-public class SaveRequestDto extends BaseRequestDto{
+public class SaveBeerRequestDto extends BaseRequestDto{
 
     /**
      * Id_Beer from Beers_API
@@ -48,7 +48,7 @@ public class SaveRequestDto extends BaseRequestDto{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        SaveRequestDto that = (SaveRequestDto) o;
+        SaveBeerRequestDto that = (SaveBeerRequestDto) o;
         return Double.compare(that.abv, abv) == 0 && Double.compare(that.ibu, ibu) == 0 && Double.compare(that.ebc, ebc) == 0 && Objects.equals(foreignBeerApiId, that.foreignBeerApiId) && Objects.equals(rate, that.rate) && Objects.equals(name, that.name);
     }
 

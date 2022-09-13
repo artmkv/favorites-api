@@ -4,7 +4,7 @@ package com.solbegsoft.favoritesapi.services;
 import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
-import com.solbegsoft.favoritesapi.models.response.ResponseBeerAndFood;
+import com.solbegsoft.favoritesapi.models.response.ResponseBeerWithFood;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
 import com.solbegsoft.favoritesapi.repositories.FoodRepository;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
@@ -41,7 +41,7 @@ public class BeerAndFoodServiceImpl implements BeerAndFoodService{
     private final MessageUtils messages;
 
     @Override
-    public ResponseBeerAndFood getBeerByIdWIthFood(UUID userId, UUID id) {
+    public ResponseBeerWithFood getBeerByIdWithFood(UUID userId, UUID id) {
 
         FavoritesBeerDto beer = beerRepository.findOneBeerById(userId, id)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
@@ -51,6 +51,6 @@ public class BeerAndFoodServiceImpl implements BeerAndFoodService{
                 .stream().map(FavoritesFoodConverter.INSTANCE::getDtoFromFavoritesFood)
                 .collect(Collectors.toList());
 
-        return new ResponseBeerAndFood(beer, foods);
+        return new ResponseBeerWithFood(beer, foods);
     }
 }

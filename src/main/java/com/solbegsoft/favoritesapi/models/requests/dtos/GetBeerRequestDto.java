@@ -14,7 +14,7 @@ import java.util.UUID;
  */
 @Data
 @SuperBuilder
-public class GetRequestDto extends BaseRequestDto {
+public class GetBeerRequestDto extends BaseRequestDto {
 
     /**
      * FavoritesBeer ID
@@ -36,7 +36,7 @@ public class GetRequestDto extends BaseRequestDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        GetRequestDto that = (GetRequestDto) o;
+        GetBeerRequestDto that = (GetBeerRequestDto) o;
         return Objects.equals(id, that.id) && Objects.equals(rate, that.rate) && Objects.equals(pageable, that.pageable);
     }
 

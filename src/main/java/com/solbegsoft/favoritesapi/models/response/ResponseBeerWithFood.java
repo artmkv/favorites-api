@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Data
 @AllArgsConstructor
-public class ResponseBeerAndFood {
+public class ResponseBeerWithFood {
 
     /**
      * @see FavoritesBeerDto

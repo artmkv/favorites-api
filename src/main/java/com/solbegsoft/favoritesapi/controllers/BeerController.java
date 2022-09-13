@@ -4,9 +4,9 @@ package com.solbegsoft.favoritesapi.controllers;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
-import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.services.BeerService;
 import com.solbegsoft.favoritesapi.utils.RequestBeerConverter;
@@ -56,11 +56,11 @@ public class BeerController {
                                                                 @RequestParam(defaultValue = "20", required = false) Integer size,
                                                                 @RequestParam(defaultValue = "id", required = false) String order,
                                                                 @RequestParam(required = false) Integer[] rate,
-                                                                @RequestHeader(value = "userId", required = false) UUID userId
+                                                                @RequestHeader(value = "userId") UUID userId
     ) {
         log.info("#GET: Get all beers by userId {}, rate {}", userId, rate);
 
-        GetRequestDto requestDto = RequestBeerConverter.INSTANCE.convertToGetRequestDto(
+        GetBeerRequestDto requestDto = RequestBeerConverter.INSTANCE.convertToGetRequestDto(
                 userId,
                 Collections.asSet(rate),
                 PageRequest.of(page, size, Sort.by(order)));
@@ -104,7 +104,7 @@ public class BeerController {
     ) {
         log.info("#POST: userId {}, beerID {}", userId, request.getForeignBeerApiId());
 
-        SaveRequestDto saveRequestDto = RequestBeerConverter.INSTANCE.convertToSaveRequestDto(userId, request);
+        SaveBeerRequestDto saveRequestDto = RequestBeerConverter.INSTANCE.convertToSaveRequestDto(userId, request);
         FavoritesBeerDto result = beerService.saveFavoriteBeer(saveRequestDto);
 
         log.info("#POST: Save success with userId {}, beerID {}", userId, request.getForeignBeerApiId());
@@ -129,8 +129,8 @@ public class BeerController {
 
         log.info("#PATCH: userId {}, beerID {}", userId, id);
 
-        UpdateRequestDto updateRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, request);
-        FavoritesBeerDto result = beerService.updateFavoriteBeer(updateRequestDto);
+        UpdateBeerRequestDto updateBeerRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, request);
+        FavoritesBeerDto result = beerService.updateFavoriteBeer(updateBeerRequestDto);
 
         log.info("#PATCH: updated success userId {}, beerID {}", userId, id);
 
@@ -153,8 +153,8 @@ public class BeerController {
     ) {
         log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
-        UpdateRequestDto updateRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, rate);
-        FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(updateRequestDto);
+        UpdateBeerRequestDto updateBeerRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, rate);
+        FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(updateBeerRequestDto);
 
         log.info("#PATCH: updated success userId {}, beerUUID {}", userId, id);
 
@@ -165,7 +165,7 @@ public class BeerController {
      * Delete one favorites beer
      *
      * @param id     Favorites beer ID
-     * @param userId user ID
+     * @param userId User ID
      * @return boolean
      */
     @DeleteMapping("/{id}")

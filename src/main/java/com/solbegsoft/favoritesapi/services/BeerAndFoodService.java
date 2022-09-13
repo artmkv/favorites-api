@@ -1,7 +1,7 @@
 package com.solbegsoft.favoritesapi.services;
 
 
-import com.solbegsoft.favoritesapi.models.response.ResponseBeerAndFood;
+import com.solbegsoft.favoritesapi.models.response.ResponseBeerWithFood;
 
 import java.util.UUID;
 
@@ -14,8 +14,8 @@ public interface BeerAndFoodService {
      * Get Favorites Beer with Food
      *
      * @param userId User Id
-     * @param id     ID
-     * @return {@link ResponseBeerAndFood}
+     * @param id     ID of Favorites Beer
+     * @return {@link ResponseBeerWithFood}
      */
-    ResponseBeerAndFood getBeerByIdWIthFood(UUID userId, UUID id);
+    ResponseBeerWithFood getBeerByIdWithFood(UUID userId, UUID id);
 }

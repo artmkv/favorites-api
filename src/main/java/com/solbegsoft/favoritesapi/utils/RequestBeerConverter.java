@@ -3,9 +3,9 @@ package com.solbegsoft.favoritesapi.utils;
 
 import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
-import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Set;
@@ -22,16 +22,16 @@ public class RequestBeerConverter {
     public static final RequestBeerConverter INSTANCE = new RequestBeerConverter();
 
     /**
-     * Convert request parameters to {@link GetRequestDto}
+     * Convert request parameters to {@link GetBeerRequestDto}
      *
      * @param userId   User Id
      * @param rate     rate
      * @param pageable {@link Pageable}
-     * @return {@link GetRequestDto}
+     * @return {@link GetBeerRequestDto}
      */
-    public GetRequestDto convertToGetRequestDto(UUID userId, Set<Integer> rate, Pageable pageable) {
+    public GetBeerRequestDto convertToGetRequestDto(UUID userId, Set<Integer> rate, Pageable pageable) {
 
-        return GetRequestDto.builder()
+        return GetBeerRequestDto.builder()
                 .userId(userId)
                 .rate(rate)
                 .pageable(pageable)
@@ -39,15 +39,15 @@ public class RequestBeerConverter {
     }
 
     /**
-     * Convert request parameters to {@link SaveRequestDto}
+     * Convert request parameters to {@link SaveBeerRequestDto}
      *
      * @param userId  User Id
      * @param request {@link SaveFavoritesBeerRequest}
-     * @return {@link SaveRequestDto}
+     * @return {@link SaveBeerRequestDto}
      */
-    public SaveRequestDto convertToSaveRequestDto(UUID userId, SaveFavoritesBeerRequest request) {
+    public SaveBeerRequestDto convertToSaveRequestDto(UUID userId, SaveFavoritesBeerRequest request) {
 
-        return SaveRequestDto.builder()
+        return SaveBeerRequestDto.builder()
                 .userId(userId)
                 .foreignBeerApiId(request.getForeignBeerApiId())
                 .rate(request.getRate())
@@ -59,16 +59,16 @@ public class RequestBeerConverter {
     }
 
     /**
-     * Convert request parameters to {@link UpdateRequestDto}
+     * Convert request parameters to {@link UpdateBeerRequestDto}
      *
      * @param userId  User Id
      * @param id      ID
      * @param request {@link UpdateFavoritesBeerRequest}
-     * @return {@link UpdateRequestDto}
+     * @return {@link UpdateBeerRequestDto}
      */
-    public UpdateRequestDto convertToUpdateRequestDto(UUID userId, UUID id, UpdateFavoritesBeerRequest request) {
+    public UpdateBeerRequestDto convertToUpdateRequestDto(UUID userId, UUID id, UpdateFavoritesBeerRequest request) {
 
-        return UpdateRequestDto.builder()
+        return UpdateBeerRequestDto.builder()
                 .userId(userId)
                 .id(id)
                 .foreignBeerApiId(request.getForeignBeerApiId())
@@ -81,16 +81,16 @@ public class RequestBeerConverter {
     }
 
     /**
-     * Convert request parameters to {@link UpdateRequestDto}
+     * Convert request parameters to {@link UpdateBeerRequestDto}
      *
      * @param userId User Id
      * @param id     ID
      * @param rate   rate
-     * @return {@link UpdateRequestDto}
+     * @return {@link UpdateBeerRequestDto}
      */
-    public UpdateRequestDto convertToUpdateRequestDto(UUID userId, UUID id, Integer rate) {
+    public UpdateBeerRequestDto convertToUpdateRequestDto(UUID userId, UUID id, Integer rate) {
 
-        return UpdateRequestDto.builder()
+        return UpdateBeerRequestDto.builder()
                 .userId(userId)
                 .rate(rate)
                 .id(id)

@@ -32,19 +32,19 @@ public class UpdateFavoritesBeerRequest extends AbstractRequest {
     /**
      * ABV
      */
-    @NotBlank
+    @NotNull
     private double abv;
 
     /**
      * IBU
      */
-    @NotBlank
+    @NotNull
     private double ibu;
 
     /**
      * EBC
      */
-    @NotBlank
+    @NotNull
     private double ebc;
 
 }

@@ -2,6 +2,7 @@ package com.solbegsoft.favoritesapi.services;
 
 
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
 
 import java.util.List;
 import java.util.UUID;
@@ -12,21 +13,12 @@ import java.util.UUID;
 public interface FoodService {
 
     /**
-     * Get list of Favorites Food
-     *
-     * @param userId User ID
-     * @return List of {@link FavoritesFoodDto}
-     */
-    List<FavoritesFoodDto> getListOfFood(UUID userId);
-
-    /**
      * Get List of Favorites Food by String
      *
-     * @param userId    USer ID
-     * @param maybeFood String of Food
+     * @param dto {@link GetFoodRequestDto}
      * @return List of {@link FavoritesFoodDto}
      */
-    List<FavoritesFoodDto> getListOfFoodByString(UUID userId, String maybeFood);
+    List<FavoritesFoodDto> getListOfFoodByString(GetFoodRequestDto dto);
 
     /**
      * Save Favorites Food

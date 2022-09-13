@@ -2,9 +2,9 @@ package com.solbegsoft.favoritesapi.repositories;
 
 
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
-import com.solbegsoft.favoritesapi.models.requests.dtos.GetRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.SaveRequestDto;
-import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,10 +25,10 @@ import java.util.UUID;
 public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#dto.userId}")
-    Page<FavoritesBeer> findAllWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
+    Page<FavoritesBeer> findAllWithPagination(@Param("dto") GetBeerRequestDto dto, Pageable pageable);
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#dto.userId} and b.rate in :#{#dto.rate}")
-    Page<FavoritesBeer> findAllBySetRatesWithPagination(@Param("dto") GetRequestDto dto, Pageable pageable);
+    Page<FavoritesBeer> findAllBySetRatesWithPagination(@Param("dto") GetBeerRequestDto dto, Pageable pageable);
 
     @Query("select b from FavoritesBeer b where b.userId = ?1 and b.id = ?2")
     Optional<FavoritesBeer> findOneBeerById(UUID userId, UUID id);
@@ -40,7 +40,7 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     @Modifying
     @Query("update FavoritesBeer b set b.rate = :#{#dto.rate} " +
             "where b.id = :#{#dto.id} and b.userId = :#{#dto.userId}")
-    void updateRateFavoritesBeer(@Param("dto") UpdateRequestDto dto);
+    void updateRateFavoritesBeer(@Param("dto") UpdateBeerRequestDto dto);
 
     @Modifying
     @Query("update FavoritesBeer b set b = :#{#entity} where b.id = :#{#entity.id} and b.userId = :#{#entity.userId}")
@@ -50,7 +50,7 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     @Query(nativeQuery = true,
             value = "insert into favorites.favorites_beer(user_id, beer_api_id, rate, name, abv, ibu, ebc) " +
                     "values(:#{#dto.userId}, :#{#dto.foreignBeerApiId}, :#{#dto.rate}, :#{#dto.name}, :#{#dto.abv}, :#{#dto.ibu}, :#{#dto.ebc})")
-    void saveFavoritesBeer(@Param("dto") SaveRequestDto dto);
+    void saveFavoritesBeer(@Param("dto") SaveBeerRequestDto dto);
 
     @Query("select b from FavoritesBeer b where b.userId = :#{#userId} and b.foreignBeerApiId = :#{#foreignBeerApiId}")
     Optional<FavoritesBeer> findByUserAndBeer(UUID userId, Long foreignBeerApiId);

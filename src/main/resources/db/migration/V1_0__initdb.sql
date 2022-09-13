@@ -19,6 +19,8 @@ create table favorites_beer
 create table favorites_food
 (
     id   uuid default uuid_generate_v1(),
+    user_id uuid not null,
+    beer_api_id int8 not null,
     rate int4,
     text varchar(512),
     primary key (id)

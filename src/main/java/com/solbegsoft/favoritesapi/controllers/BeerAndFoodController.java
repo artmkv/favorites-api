@@ -2,7 +2,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
-import com.solbegsoft.favoritesapi.models.response.ResponseBeerAndFood;
+import com.solbegsoft.favoritesapi.models.response.ResponseBeerWithFood;
 import com.solbegsoft.favoritesapi.services.BeerAndFoodService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,11 +36,11 @@ public class BeerAndFoodController {
      */
     @GetMapping("/{id}/foods")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<ResponseBeerAndFood> getBeerFavoritesById(@PathVariable("id") UUID id,
-                                                                 @RequestHeader UUID userId
+    public ResponseApi<ResponseBeerWithFood> getBeerFavoritesById(@PathVariable("id") UUID id,
+                                                                  @RequestHeader UUID userId
     ) {
         log.info("#GET: Get beer with food by userId {}, ID {}", userId, id);
-        ResponseBeerAndFood result = beerAndFoodService.getBeerByIdWIthFood(userId, id);
+        ResponseBeerWithFood result = beerAndFoodService.getBeerByIdWithFood(userId, id);
         log.info("#GET: Success get beer with food by userId {}, ID {}", userId, id);
 
         return new ResponseApi<>(result);

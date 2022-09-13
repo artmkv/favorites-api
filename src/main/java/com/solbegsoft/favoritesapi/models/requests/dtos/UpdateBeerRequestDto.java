@@ -12,7 +12,7 @@ import java.util.UUID;
  */
 @Data
 @SuperBuilder
-public class UpdateRequestDto extends BaseRequestDto {
+public class UpdateBeerRequestDto extends BaseRequestDto {
 
 
     /**
@@ -55,7 +55,7 @@ public class UpdateRequestDto extends BaseRequestDto {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        UpdateRequestDto that = (UpdateRequestDto) o;
+        UpdateBeerRequestDto that = (UpdateBeerRequestDto) o;
         return Double.compare(that.abv, abv) == 0 && Double.compare(that.ibu, ibu) == 0 && Double.compare(that.ebc, ebc) == 0 && Objects.equals(id, that.id) && Objects.equals(foreignBeerApiId, that.foreignBeerApiId) && Objects.equals(rate, that.rate) && Objects.equals(name, that.name);
     }
 
