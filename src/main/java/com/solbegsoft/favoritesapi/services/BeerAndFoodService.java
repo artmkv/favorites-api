@@ -14,8 +14,8 @@ public interface BeerAndFoodService {
      * Get Favorites Beer with Food
      *
      * @param userId User Id
-     * @param id     ID of Favorites Beer
+     * @param beerId ID of Favorites Beer
      * @return {@link ResponseBeerWithFood}
      */
-    ResponseBeerWithFood getBeerByIdWithFood(UUID userId, UUID id);
+    ResponseBeerWithFood getBeerWithFoodByBeerId(UUID userId, UUID beerId);
 }

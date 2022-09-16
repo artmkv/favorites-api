@@ -28,4 +28,16 @@ public class MessageUtils {
 
         return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
     }
+
+    /**
+     * Get message with Objects
+     *
+     * @param code    Message Code
+     * @param objects Objects to embed in a string
+     * @return String
+     */
+    public String getMessage(String code, Object... objects) {
+
+        return messageSource.getMessage(code, objects, LocaleContextHolder.getLocale());
+    }
 }

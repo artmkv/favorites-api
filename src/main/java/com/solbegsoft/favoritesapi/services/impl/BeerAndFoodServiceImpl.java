@@ -1,23 +1,17 @@
 package com.solbegsoft.favoritesapi.services.impl;
 
 
-import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.response.ResponseBeerWithFood;
-import com.solbegsoft.favoritesapi.repositories.BeerRepository;
-import com.solbegsoft.favoritesapi.repositories.FoodRepository;
 import com.solbegsoft.favoritesapi.services.BeerAndFoodService;
-import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
-import com.solbegsoft.favoritesapi.utils.FavoritesFoodConverter;
-import com.solbegsoft.favoritesapi.utils.MessageUtils;
+import com.solbegsoft.favoritesapi.services.BeerService;
+import com.solbegsoft.favoritesapi.services.FoodService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Food And Beer Service
@@ -27,31 +21,21 @@ import java.util.stream.Collectors;
 public class BeerAndFoodServiceImpl implements BeerAndFoodService {
 
     /**
-     * @see BeerRepository
+     * @see BeerService
      */
-    private final BeerRepository beerRepository;
+    private final BeerService beerService;
 
     /**
-     * @see FoodRepository
+     * @see FoodService
      */
-    private final FoodRepository foodRepository;
-
-    /**
-     * @see MessageUtils
-     */
-    private final MessageUtils messages;
+    private final FoodService foodService;
 
     @Override
-    public ResponseBeerWithFood getBeerByIdWithFood(UUID userId, UUID id) {
+    public ResponseBeerWithFood getBeerWithFoodByBeerId(UUID userId, UUID id) {
 
-        FavoritesBeerDto beer = beerRepository.findOneBeerById(userId, id)
-                .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND)));
+        FavoritesBeerDto beer = beerService.getBeerById(userId, id);
+        List<FavoritesFoodDto> food = foodService.getListOfFoodByBeerId(userId, beer.getForeignBeerApiId());
 
-        List<FavoritesFoodDto> foods = foodRepository.getFavoritesFoodByUserIdAndBeerId(userId, beer.getForeignBeerApiId())
-                .stream().map(FavoritesFoodConverter.INSTANCE::getDtoFromFavoritesFood)
-                .collect(Collectors.toList());
-
-        return new ResponseBeerWithFood(beer, foods);
+        return new ResponseBeerWithFood(beer, food);
     }
 }

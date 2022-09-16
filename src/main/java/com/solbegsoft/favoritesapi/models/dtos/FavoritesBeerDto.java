@@ -4,8 +4,6 @@ package com.solbegsoft.favoritesapi.models.dtos;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.Objects;
-
 /**
  * Favorites Beer Dto
  */
@@ -14,6 +12,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 public class FavoritesBeerDto extends BaseDto{
 
@@ -37,17 +36,4 @@ public class FavoritesBeerDto extends BaseDto{
      */
     private double ebc;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        FavoritesBeerDto dto = (FavoritesBeerDto) o;
-        return Double.compare(dto.abv, abv) == 0 && Double.compare(dto.ibu, ibu) == 0 && Double.compare(dto.ebc, ebc) == 0 && Objects.equals(name, dto.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), name, abv, ibu, ebc);
-    }
 }

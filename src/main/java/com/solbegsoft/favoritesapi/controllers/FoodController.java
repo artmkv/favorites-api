@@ -43,10 +43,10 @@ public class FoodController {
     public ResponseApi<List<FavoritesFoodDto>> getFavoritesFoodByString(@RequestHeader UUID userId,
                                                                         @RequestParam(required = false) String search
     ) {
-        log.info("#GET: Get all foods by userId {} and by string {}", userId, search);
-        GetFoodRequestDto requestDto = RequestFoodConverter.INSTANCE.convertToGetFoodRequestDto(userId, search);
+        log.info("#GET: Get all food by userId {} and by string {}", userId, search);
+        GetFoodRequestDto requestDto = RequestFoodConverter.convertToGetFoodRequestDto(userId, search);
         List<FavoritesFoodDto> result = foodService.getListOfFoodByString(requestDto);
-        log.info("#GET: Success get all foods by userId {} and by string {}", userId, search);
+        log.info("#GET: Success get all food by userId {} and by string {}", userId, search);
 
         return new ResponseApi<>(result);
     }
@@ -64,7 +64,7 @@ public class FoodController {
                                                            @RequestBody SaveFavoritesFoodRequest request
     ) {
         log.info("#POST: Save food by userId {} and by beerId {}", userId, request.getForeignBeerApiId());
-        FavoritesFoodDto favoritesFoodDto = RequestFoodConverter.INSTANCE.getFoodDtoFromRequest(userId, request);
+        FavoritesFoodDto favoritesFoodDto = RequestFoodConverter.getFoodDtoFromRequest(userId, request);
         FavoritesFoodDto result = foodService.saveOneFavoritesFood(favoritesFoodDto);
         log.info("#POST: Success save food by userId {} and by beerId {}", userId, request.getForeignBeerApiId());
 

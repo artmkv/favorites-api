@@ -27,6 +27,14 @@ public interface FavoritesBeerConverter {
     FavoritesBeerDto toDtoFromFavoritesBeer(FavoritesBeer favoritesBeer);
 
     /**
+     * Convert  {@link FavoritesBeerDto} to {@link FavoritesBeer}
+     *
+     * @param dto {@link FavoritesBeerDto}
+     * @return {@link FavoritesBeer}
+     */
+    FavoritesBeer toFavoritesBeerFromDto(FavoritesBeerDto dto);
+
+    /**
      * Update Model
      *
      * @param favoritesBeerDto {@link FavoritesBeerDto}

@@ -6,6 +6,8 @@ import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 /**
  * Converter for {@link FavoritesFood} and {@link FavoritesFoodDto}
  */
@@ -32,4 +34,12 @@ public interface FavoritesFoodConverter {
      * @return {@link FavoritesFood}
      */
     FavoritesFood getFavoritesFoodFromDto(FavoritesFoodDto favoritesFoodDto);
+
+    /**
+     * Convert List of {@link FavoritesFood} to List of {@link FavoritesFoodDto}
+     *
+     * @param favoritesFoodList List of {@link FavoritesFood}
+     * @return List of {@link FavoritesFoodDto}
+     */
+    List<FavoritesFoodDto> getListDtoFromListFavoritesFood(List<FavoritesFood> favoritesFoodList);
 }

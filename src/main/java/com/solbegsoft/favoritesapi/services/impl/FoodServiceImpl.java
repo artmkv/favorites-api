@@ -14,10 +14,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
- * Implementation Food Service
+ * Food service implemented {@link FoodService}
  */
 @Slf4j
 @Service
@@ -30,26 +29,23 @@ public class FoodServiceImpl implements FoodService {
     private final FoodRepository repository;
 
     @Override
+    public List<FavoritesFoodDto> getListOfFoodByBeerId(UUID userId, Long foreignBeerId) {
+
+        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFood(userId));
+    }
+
+    @Override
     public List<FavoritesFoodDto> getListOfFoodByString(GetFoodRequestDto dto) {
-
         UUID userId = dto.getUserId();
-        if(Objects.nonNull(dto.getText())){
-            String string = "%" + dto.getText().toLowerCase() + "%";
-
-            return repository.getAllFavoritesFoodByString(userId, string)
-                    .stream()
-                    .map(FavoritesFoodConverter.INSTANCE::getDtoFromFavoritesFood)
-                    .collect(Collectors.toList());
+        if (isExistSearchString(dto)) {
+            String searchString = "%" + dto.getText().toLowerCase() + "%";
+            return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFoodByString(userId, searchString));
         }
-
-        return repository.getAllFavoritesFood(userId).stream()
-                .map(FavoritesFoodConverter.INSTANCE::getDtoFromFavoritesFood)
-                .collect(Collectors.toList());
+        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFood(userId));
     }
 
     @Override
     public FavoritesFoodDto saveOneFavoritesFood(FavoritesFoodDto dto) {
-
         FavoritesFood entity = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(dto);
         FavoritesFood save = repository.save(entity);
 
@@ -60,5 +56,15 @@ public class FoodServiceImpl implements FoodService {
     public void deleteFavoritesFood(UUID userId, UUID id) {
 
         repository.deleteOne(userId, id);
+    }
+
+    /**
+     * Is exist Search string in RequestDto
+     *
+     * @param dto {@link GetFoodRequestDto}
+     * @return boolean
+     */
+    private boolean isExistSearchString(GetFoodRequestDto dto) {
+        return Objects.nonNull(dto.getText());
     }
 }

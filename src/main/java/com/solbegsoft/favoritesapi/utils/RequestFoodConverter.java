@@ -4,18 +4,16 @@ package com.solbegsoft.favoritesapi.utils;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesFoodRequest;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
 /**
  * Converter Request Food
  */
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RequestFoodConverter {
-
-    /**
-     * Instance
-     */
-    public static final RequestFoodConverter INSTANCE = new RequestFoodConverter();
 
     /**
      * Convert Request parameters to {@link FavoritesFoodDto}
@@ -24,7 +22,7 @@ public class RequestFoodConverter {
      * @param request {@link SaveFavoritesFoodRequest}
      * @return {@link FavoritesFoodDto}
      */
-    public FavoritesFoodDto getFoodDtoFromRequest(UUID userId, SaveFavoritesFoodRequest request) {
+    public static FavoritesFoodDto getFoodDtoFromRequest(UUID userId, SaveFavoritesFoodRequest request) {
 
         return FavoritesFoodDto.builder()
                 .userId(userId)
@@ -41,7 +39,7 @@ public class RequestFoodConverter {
      * @param string Search string
      * @return {@link GetFoodRequestDto}
      */
-    public GetFoodRequestDto convertToGetFoodRequestDto(UUID userId, String string) {
+    public static GetFoodRequestDto convertToGetFoodRequestDto(UUID userId, String string) {
         return GetFoodRequestDto.builder()
                 .userId(userId)
                 .text(string)

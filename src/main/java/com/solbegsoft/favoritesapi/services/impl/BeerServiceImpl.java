@@ -1,7 +1,8 @@
 package com.solbegsoft.favoritesapi.services.impl;
 
 
-import com.solbegsoft.favoritesapi.exceptions.ExceptionMessagesConstant;
+import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
+import com.solbegsoft.favoritesapi.exceptions.BeerEntityNotFoundException;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
@@ -10,15 +11,13 @@ import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
 import com.solbegsoft.favoritesapi.services.BeerService;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
-import com.solbegsoft.favoritesapi.utils.MessageUtils;
-import com.solbegsoft.favoritesapi.utils.UpdateBeerRequestEntityConverter;
+import com.solbegsoft.favoritesapi.utils.RequestBeerAndEntityBeerConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -35,24 +34,16 @@ public class BeerServiceImpl implements BeerService {
      */
     private final BeerRepository beerRepository;
 
-    /**
-     * @see MessageUtils
-     */
-    private final MessageUtils messages;
-
     @Override
-    public FavoritesBeerDto getBeerById(UUID userId, UUID id) {
+    public FavoritesBeerDto getBeerById(UUID userId, UUID beerId) {
 
-        return beerRepository.findOneBeerById(userId, id)
-                .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
+        return getFavoritesBeerDtoToResponse(userId, beerId);
     }
 
     @Override
     public Page<FavoritesBeerDto> getAllBeersByRate(GetBeerRequestDto getRequestDto) {
 
-        if (Objects.isNull(getRequestDto.getRate()) || getRequestDto.getRate().isEmpty()) {
-
+        if (isExistRate(getRequestDto)) {
             return beerRepository.findAllWithPagination(getRequestDto, getRequestDto.getPageable())
                     .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer);
         }
@@ -60,58 +51,72 @@ public class BeerServiceImpl implements BeerService {
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer);
     }
 
+
     @Override
-    public void deleteFavoriteBeer(UUID userId, UUID id) {
+    public void deleteFavoriteBeer(UUID userId, UUID beerId) {
 
-        FavoritesBeer result = beerRepository.findOneBeerById(userId, id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
-
+        FavoritesBeer result = beerRepository.findOneBeerById(userId, beerId)
+                .orElseThrow(() -> new BeerEntityNotFoundException(ExceptionMessageCodes.ENTITY_NOT_FOUND, beerId));
         beerRepository.deleteOne(result.getUserId(), result.getId());
     }
 
     @Override
     public FavoritesBeerDto updateRateFavoritesBeer(UpdateBeerRequestDto requestDto) {
-        UUID id = requestDto.getId();
-        UUID userId = requestDto.getUserId();
         beerRepository.updateRateFavoritesBeer(requestDto);
 
-        return beerRepository.findOneBeerById(userId, id)
-                .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
+        return getFavoritesBeerDtoToResponse(requestDto.getUserId(), requestDto.getId());
     }
 
     @Override
     public FavoritesBeerDto updateFavoriteBeer(UpdateBeerRequestDto requestDto) {
-
         UUID id = requestDto.getId();
         UUID userId = requestDto.getUserId();
-        FavoritesBeer favoritesBeer = beerRepository.findOneBeerById(userId, id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
 
-        FavoritesBeerDto favoritesBeerDto = UpdateBeerRequestEntityConverter.INSTANCE.convertRequestToFavoritesBeer(requestDto);
-        FavoritesBeerConverter.INSTANCE.updateModel(favoritesBeerDto, favoritesBeer);
+        FavoritesBeer beer = beerRepository.findOneBeerById(userId, id)
+                .orElseThrow(() -> new BeerEntityNotFoundException(ExceptionMessageCodes.ENTITY_NOT_FOUND, id));
+        FavoritesBeerDto beerDto = RequestBeerAndEntityBeerConverter.convertUpdateRequestToFavoritesBeer(requestDto);
+        FavoritesBeerConverter.INSTANCE.updateModel(beerDto, beer);
+        beerRepository.updateFavoritesBeer(beer);
 
-        beerRepository.updateFavoritesBeer(favoritesBeer);
-
-        return beerRepository.findOneBeerById(userId, id)
-                .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), id)));
+        return getFavoritesBeerDtoToResponse(userId, id);
     }
 
     @Override
     public FavoritesBeerDto saveFavoriteBeer(SaveBeerRequestDto requestDto) {
-
         UUID userId = requestDto.getUserId();
         Long beerId = requestDto.getForeignBeerApiId();
 
         if (beerRepository.findByUserAndBeer(userId, beerId).isPresent()) {
-            throw new EntityExistsException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_ALREADY_EXIST), beerId));
+            throw new EntityExistsException(ExceptionMessageCodes.ENTITY_ALREADY_EXIST.getMessageCode());
         }
-        beerRepository.saveFavoritesBeer(requestDto);
+        FavoritesBeer beer = RequestBeerAndEntityBeerConverter.convertSaveRequestToFavoritesBeer(requestDto);
+        beerRepository.saveFavoritesBeer(beer);
 
-        return beerRepository.findByUserAndBeer(userId, beerId)
+        return getFavoritesBeerDtoToResponse(userId, userId);
+    }
+
+    /**
+     * Checks the rate in the RequestDto
+     *
+     * @param getRequestDto {@link GetBeerRequestDto}
+     * @return boolean
+     */
+    private boolean isExistRate(GetBeerRequestDto getRequestDto) {
+        return Objects.isNull(getRequestDto.getRate()) || getRequestDto.getRate().isEmpty();
+    }
+
+    /**
+     * Return FavoritesBeerDto
+     *
+     * @param userId User ID
+     * @param beerId Beer ID
+     * @return {@link FavoritesBeerDto}
+     */
+    private FavoritesBeerDto getFavoritesBeerDtoToResponse(UUID userId, UUID beerId) {
+
+        return beerRepository.findOneBeerById(userId, beerId)
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
-                .orElseThrow(() -> new EntityNotFoundException(String.format(messages.getMessage(ExceptionMessagesConstant.ENTITY_NOT_FOUND), beerId)));
+                .orElseThrow(() -> new BeerEntityNotFoundException(ExceptionMessageCodes.ENTITY_NOT_FOUND, beerId));
     }
 
 }

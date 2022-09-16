@@ -5,6 +5,7 @@ import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,16 +19,45 @@ import java.util.UUID;
 @Transactional
 public interface FoodRepository extends JpaRepository<FavoritesFood, UUID> {
 
-    @Query(value = "select f from FavoritesFood f where f.userId = ?1")
-    List<FavoritesFood> getAllFavoritesFood(UUID userId);
+    /**
+     * Find All Favorites Food
+     *
+     * @param userId User ID
+     * @return List of {@link FavoritesFood}
+     */
+    @Query(value = "select f from FavoritesFood f where f.userId = :#{#userId}")
+    List<FavoritesFood> findAllFavoritesFood(@Param("userId") UUID userId);
 
-    @Query(value = "select f from FavoritesFood f where f.userId = ?1 and lower(f.text) like ?2")
-    List<FavoritesFood> getAllFavoritesFoodByString(UUID userId, String str);
+    /**
+     * Find All Favorites Food by Beer ID
+     *
+     * @param userId        User ID
+     * @param foreignBeerId Foreign Beer ID
+     * @return List of {@link FavoritesFood}
+     */
+    @Query(value = "select f from FavoritesFood f where f.userId = :#{#userId} and f.foreignBeerApiId = :#{#foreignBeerId}")
+    List<FavoritesFood> findAllFavoritesFoodByBeerId(@Param("userId") UUID userId,
+                                                     @Param("foreignBeerId") Long foreignBeerId);
 
-    @Query(value = "select f from FavoritesFood f where f.userId = ?1 and f.foreignBeerApiId = ?2")
-    List<FavoritesFood> getFavoritesFoodByUserIdAndBeerId (UUID userId, Long foreignBeerApiId);
+    /**
+     * Find All Favorites Food by String
+     *
+     * @param userId    User ID
+     * @param maybeFood String
+     * @return List of {@link FavoritesFood}
+     */
+    @Query(value = "select f from FavoritesFood f where f.userId = :#{#userId} and lower(f.text) like :#{#maybeFood}")
+    List<FavoritesFood> findAllFavoritesFoodByString(@Param("userId") UUID userId,
+                                                     @Param("maybeFood") String maybeFood);
 
+    /**
+     * Delete Favorites Food
+     *
+     * @param userId User ID
+     * @param beerId Beer ID
+     */
     @Modifying
-    @Query("delete from FavoritesFood f where f.userId = ?1 and f.id = ?2")
-    void deleteOne(UUID userId, UUID id);
+    @Query("delete from FavoritesFood f where f.userId = :#{#userId} and f.id = :#{#beerId}")
+    void deleteOne(@Param("userId") UUID userId,
+                   @Param("beerId") UUID beerId);
 }

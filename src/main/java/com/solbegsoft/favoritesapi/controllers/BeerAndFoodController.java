@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 /**
- * Favorites beer controller
+ * Controller to Beer with Food
  */
 @Slf4j
 @Validated
 @RestController
-@RequestMapping("favorites-api/v1/beers")
+@RequestMapping("favorites-api/v1/beer-with-food")
 @RequiredArgsConstructor
 public class BeerAndFoodController {
 
@@ -30,18 +30,18 @@ public class BeerAndFoodController {
     /**
      * Get Favorites Beer with Favorites Food
      *
-     * @param id     Favorites Beer ID
+     * @param beerId Favorites Beer ID
      * @param userId User Id
      * @return {@link ResponseApi}
      */
-    @GetMapping("/{id}/foods")
+    @GetMapping("/{beerId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<ResponseBeerWithFood> getBeerFavoritesById(@PathVariable("id") UUID id,
+    public ResponseApi<ResponseBeerWithFood> getBeerFavoritesById(@PathVariable("beerId") UUID beerId,
                                                                   @RequestHeader UUID userId
     ) {
-        log.info("#GET: Get beer with food by userId {}, ID of beer {}", userId, id);
-        ResponseBeerWithFood result = beerAndFoodService.getBeerByIdWithFood(userId, id);
-        log.info("#GET: Success get beer with food by userId {}, ID of beer  {}", userId, id);
+        log.info("#GET: Get beer with food by userId {}, ID of beer {}", userId, beerId);
+        ResponseBeerWithFood result = beerAndFoodService.getBeerWithFoodByBeerId(userId, beerId);
+        log.info("#GET: Success get beer with food by userId {}, ID of beer  {}", userId, beerId);
 
         return new ResponseApi<>(result);
     }

@@ -13,6 +13,15 @@ import java.util.UUID;
 public interface FoodService {
 
     /**
+     * Get List of Favorites Food by Foreign Beer Id
+     *
+     * @param userId User ID
+     * @param foreignBeerId foreignBeerId
+     * @return List of {@link FavoritesFoodDto}
+     */
+    List<FavoritesFoodDto> getListOfFoodByBeerId(UUID userId, Long foreignBeerId);
+
+    /**
      * Get List of Favorites Food by String
      *
      * @param dto {@link GetFoodRequestDto}

@@ -60,7 +60,7 @@ public class BeerController {
     ) {
         log.info("#GET: Get all beers by userId {}, rate {}", userId, rate);
 
-        GetBeerRequestDto requestDto = RequestBeerConverter.INSTANCE.convertToGetRequestDto(
+        GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(
                 userId,
                 Collections.asSet(rate),
                 PageRequest.of(page, size, Sort.by(order)));
@@ -104,7 +104,7 @@ public class BeerController {
     ) {
         log.info("#POST: userId {}, beerID {}", userId, request.getForeignBeerApiId());
 
-        SaveBeerRequestDto saveRequestDto = RequestBeerConverter.INSTANCE.convertToSaveRequestDto(userId, request);
+        SaveBeerRequestDto saveRequestDto = RequestBeerConverter.convertToSaveRequestDto(userId, request);
         FavoritesBeerDto result = beerService.saveFavoriteBeer(saveRequestDto);
 
         log.info("#POST: Save success with userId {}, beerID {}", userId, request.getForeignBeerApiId());
@@ -129,7 +129,7 @@ public class BeerController {
 
         log.info("#PATCH: userId {}, beerID {}", userId, id);
 
-        UpdateBeerRequestDto updateBeerRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, request);
+        UpdateBeerRequestDto updateBeerRequestDto = RequestBeerConverter.convertToUpdateRequestDto(userId, id, request);
         FavoritesBeerDto result = beerService.updateFavoriteBeer(updateBeerRequestDto);
 
         log.info("#PATCH: updated success userId {}, beerID {}", userId, id);
@@ -145,7 +145,7 @@ public class BeerController {
      * @param userId user ID
      * @return {@link FavoritesBeerDto}
      */
-    @PatchMapping("/{id}/{rate}")
+    @PatchMapping("/{id}/rate/{rate}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     public ResponseApi<FavoritesBeerDto> updateRateOfBeerFavorites(@PathVariable("id") UUID id,
                                                                    @PathVariable("rate") @DecimalMax(value = "5") Integer rate,
@@ -153,7 +153,7 @@ public class BeerController {
     ) {
         log.info("#PATCH: userId {}, beerUUID {}", userId, id);
 
-        UpdateBeerRequestDto updateBeerRequestDto = RequestBeerConverter.INSTANCE.convertToUpdateRequestDto(userId, id, rate);
+        UpdateBeerRequestDto updateBeerRequestDto = RequestBeerConverter.convertToUpdateRequestDto(userId, id, rate);
         FavoritesBeerDto favoritesBeer = beerService.updateRateFavoritesBeer(updateBeerRequestDto);
 
         log.info("#PATCH: updated success userId {}, beerUUID {}", userId, id);
