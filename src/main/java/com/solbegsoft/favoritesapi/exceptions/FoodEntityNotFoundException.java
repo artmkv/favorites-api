@@ -10,11 +10,10 @@ import lombok.Getter;
 @Getter
 public class FoodEntityNotFoundException extends AbstractEntityNotFoundException {
 
-    private Object[] objects;
+    private final transient Object[] objects;
 
     public FoodEntityNotFoundException(ExceptionMessageCodes messageCodes, Object... objects) {
         super(messageCodes);
         this.objects = objects;
     }
-
 }

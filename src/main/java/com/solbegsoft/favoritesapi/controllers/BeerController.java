@@ -12,7 +12,6 @@ import com.solbegsoft.favoritesapi.services.BeerService;
 import com.solbegsoft.favoritesapi.utils.RequestBeerConverter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.ap.internal.util.Collections;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -62,7 +61,7 @@ public class BeerController {
 
         GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(
                 userId,
-                Collections.asSet(rate),
+                rate,
                 PageRequest.of(page, size, Sort.by(order)));
         Page<FavoritesBeerDto> favorites = beerService.getAllBeersByRate(requestDto);
 

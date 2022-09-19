@@ -56,15 +56,16 @@ public class FavoritesApiExceptionHandler {
     }
 
     /**
-     * Handle {@link RuntimeException}
+     * Handle {@link IllegalArgumentException}
      *
      * @param e exception
      * @return {@link ResponseApi}
      */
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseApi<String> handlerRuntimeException(RuntimeException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseApi<String> handlerIllegalArgumentException(IllegalArgumentException e) {
 
         return new ResponseApi<>(e.getMessage());
     }
+
 }

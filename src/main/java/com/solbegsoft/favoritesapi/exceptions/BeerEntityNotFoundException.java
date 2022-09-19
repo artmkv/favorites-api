@@ -1,5 +1,6 @@
 package com.solbegsoft.favoritesapi.exceptions;
 
+
 import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class BeerEntityNotFoundException extends AbstractEntityNotFoundException {
 
-    private final Object[] objects;
+    private final transient Object[] objects;
 
     public BeerEntityNotFoundException(ExceptionMessageCodes messageCodes, Object... objects) {
         super(messageCodes);
