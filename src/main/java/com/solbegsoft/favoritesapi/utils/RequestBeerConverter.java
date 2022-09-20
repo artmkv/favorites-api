@@ -8,9 +8,10 @@ import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import org.mapstruct.ap.internal.util.Collections;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Set;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -27,11 +28,12 @@ public class RequestBeerConverter {
      * @param pageable {@link Pageable}
      * @return {@link GetBeerRequestDto}
      */
-    public static GetBeerRequestDto convertToGetRequestDto(UUID userId, Set<Integer> rate, Pageable pageable) {
+    public static GetBeerRequestDto convertToGetRequestDto(UUID userId, Integer[] rate, Pageable pageable) {
+        Integer[] rateArray = Objects.requireNonNullElseGet(rate, () -> new Integer[]{});
 
         return GetBeerRequestDto.builder()
                 .userId(userId)
-                .rate(rate)
+                .rate( Collections.asSet(rateArray))
                 .pageable(pageable)
                 .build();
     }

@@ -18,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "favorites_food", schema = "favorites")
+@Table(name = "favorites_food")
 public class FavoritesFood {
 
     /**
