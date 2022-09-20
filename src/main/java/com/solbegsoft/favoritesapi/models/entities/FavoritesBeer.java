@@ -19,7 +19,7 @@ import java.util.UUID;
 @Builder
 @Entity
 @IdClass(BeersId.class)
-@Table(name = "favorites_beer")
+@Table(name = "favorites_beer", schema = "favorites")
 public class FavoritesBeer {
 
     /**
