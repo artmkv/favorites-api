@@ -2,7 +2,6 @@ package com.solbegsoft.favoritesapi.repositories;
 
 
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -47,7 +46,7 @@ public interface FoodRepository extends JpaRepository<FavoritesFood, UUID> {
      * @param maybeFood String
      * @return List of {@link FavoritesFood}
      */
-    @Query(value = "select f from FavoritesFood f where f.userId = :#{#userId} and lower(f.text) like :#{#maybeFood}")
+    @Query(value = "select f from FavoritesFood f where f.userId = :#{#userId} and lower(f.text) like %:#{#maybeFood}%")
     List<FavoritesFood> findAllFavoritesFoodByString(@Param("userId") UUID userId,
                                                      @Param("maybeFood") String maybeFood);
 

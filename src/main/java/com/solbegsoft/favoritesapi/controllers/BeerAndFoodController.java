@@ -36,8 +36,8 @@ public class BeerAndFoodController {
      */
     @GetMapping("/{beerId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseApi<ResponseBeerWithFood> getBeerFavoritesById(@PathVariable("beerId") UUID beerId,
-                                                                  @RequestHeader UUID userId
+    public ResponseApi<ResponseBeerWithFood> getFavoritesBeerWithFoodByBeerId(@PathVariable("beerId") UUID beerId,
+                                                                              @RequestHeader UUID userId
     ) {
         log.info("#GET: Get beer with food by userId {}, ID of beer {}", userId, beerId);
         ResponseBeerWithFood result = beerAndFoodService.getBeerWithFoodByBeerId(userId, beerId);

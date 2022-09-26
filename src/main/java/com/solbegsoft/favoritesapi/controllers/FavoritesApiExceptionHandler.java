@@ -22,7 +22,9 @@ import javax.persistence.EntityNotFoundException;
 @RequiredArgsConstructor
 public class FavoritesApiExceptionHandler {
 
-
+    /**
+     * @see MessageUtils
+     */
     private final MessageUtils messageUtils;
 
     /**

@@ -10,8 +10,15 @@ import lombok.Getter;
 @Getter
 public abstract class AbstractEntityNotFoundException extends RuntimeException{
 
+    /**
+     * Message Code
+     */
     private final String messageCode;
 
+    /**Constructor
+     *
+     * @param messageCodes {@link ExceptionMessageCodes}
+     */
     protected AbstractEntityNotFoundException(ExceptionMessageCodes messageCodes) {
         this.messageCode = messageCodes.getMessageCode();
     }

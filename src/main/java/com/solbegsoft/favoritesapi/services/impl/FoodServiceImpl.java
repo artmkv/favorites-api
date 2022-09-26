@@ -38,8 +38,8 @@ public class FoodServiceImpl implements FoodService {
     public List<FavoritesFoodDto> getListOfFoodByString(GetFoodRequestDto dto) {
         UUID userId = dto.getUserId();
         if (isExistSearchString(dto)) {
-            String searchString = "%" + dto.getText().toLowerCase() + "%";
-            return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFoodByString(userId, searchString));
+            List<FavoritesFood> allFavoritesFoodByString = repository.findAllFavoritesFoodByString(userId, dto.getText());
+            return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(allFavoritesFoodByString);
         }
         return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFood(userId));
     }
