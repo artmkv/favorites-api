@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi.controllers.validation;
+package com.solbegsoft.favoritesapi.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public abstract class AbstractControllerValidationTest{
+public abstract class AbstractMVCTest {
 
     /**
      * @see MockMvc

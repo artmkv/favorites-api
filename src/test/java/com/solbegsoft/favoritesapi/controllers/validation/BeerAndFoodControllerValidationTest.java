@@ -1,25 +1,22 @@
 package com.solbegsoft.favoritesapi.controllers.validation;
 
 
+import com.solbegsoft.favoritesapi.controllers.AbstractMVCTest;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 /**
  * Validate header UserId in BeerAndFoodControllerTest
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class BeerAndFoodControllerValidationTest extends AbstractControllerValidationTest{
+class BeerAndFoodControllerValidationTest extends AbstractMVCTest {
 
     /**
      * String UUID beer ID
@@ -33,15 +30,15 @@ class BeerAndFoodControllerValidationTest extends AbstractControllerValidationTe
      * @throws Exception exception
      */
     @ParameterizedTest
-    @ValueSource(strings = {"d4ce25e2-22ac-11ed", "___", "3453455!?34r", " _- "})
-    @EmptySource
+    @ValueSource(strings = {"d4ce25e2-22ac-11ed", "___", "3453455!?34r", "ff _-$ 3)"})
     void testAllEP_WhenNotValidUserId_ShouldStatus4xx(String userIdString) throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/beer-with-food/" + stringBeerId)
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
     }
 
     /**
@@ -55,6 +52,7 @@ class BeerAndFoodControllerValidationTest extends AbstractControllerValidationTe
                         get("/favorites-api/v1/beer-with-food/" + stringBeerId)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("Body").value(Matchers.nullValue()));
     }
 }

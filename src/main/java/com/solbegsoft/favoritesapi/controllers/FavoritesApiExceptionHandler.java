@@ -69,5 +69,4 @@ public class FavoritesApiExceptionHandler {
 
         return new ResponseApi<>(e.getMessage());
     }
-
 }

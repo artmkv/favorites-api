@@ -6,21 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Validate header UserId in {@link FoodController}
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class FoodControllerValidationTest extends AbstractControllerValidationTest {
+class FoodControllerValidationTest extends AbstractValidationTest {
 
     /**
      * Validate header UserID in all EP for any values
@@ -29,10 +24,42 @@ class FoodControllerValidationTest extends AbstractControllerValidationTest {
      * @throws Exception exception
      */
     @ParameterizedTest
-    @ValueSource(strings = {"d4ce25e2-22ac-11ed", "___", "543422", "fdja!y&"})
-    @EmptySource
+    @ValueSource(strings = {"d4ce25e2-22ac-11ed", "___", "543422", "fdja! y&"})
     void testAllEP_WhenNotValidUserId_ShouldStatus4xx(String userIdString) throws Exception {
 
+        mockMvc.perform(
+                        get("/favorites-api/v1/food")
+                                .header("userId", userIdString)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
+
+        mockMvc.perform(
+                        post("/favorites-api/v1/food")
+                                .header("userId", userIdString)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
+
+        mockMvc.perform(
+                        delete("/favorites-api/v1/food/" + stringBeerId)
+                                .header("userId", userIdString)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
+    }
+
+    /**
+     * Validate EndPoint if header UserID is not exist
+     *
+     * @throws Exception exception
+     */
+    @ParameterizedTest
+    @EmptySource
+    void testAllEP_WhenEmptyUserId_ShouldStatus4xx(String userIdString) throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/food")
                                 .header("userId", userIdString)
@@ -48,7 +75,7 @@ class FoodControllerValidationTest extends AbstractControllerValidationTest {
                 .andExpect(status().is4xxClientError());
 
         mockMvc.perform(
-                        delete("/favorites-api/v1/food")
+                        delete("/favorites-api/v1/food/" + stringBeerId)
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
@@ -64,18 +91,6 @@ class FoodControllerValidationTest extends AbstractControllerValidationTest {
     void testAllEP_WhenNotExistUserId_ShouldStatus4xx() throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/food")
-                )
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-
-        mockMvc.perform(
-                        post("/favorites-api/v1/food")
-                )
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-
-        mockMvc.perform(
-                        delete("/favorites-api/v1/food")
                 )
                 .andDo(print())
                 .andExpect(status().is4xxClientError());

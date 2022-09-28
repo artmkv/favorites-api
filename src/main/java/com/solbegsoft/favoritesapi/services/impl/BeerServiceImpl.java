@@ -90,9 +90,9 @@ public class BeerServiceImpl implements BeerService {
             throw new EntityExistsException(ExceptionMessageCodes.ENTITY_ALREADY_EXIST.getMessageCode());
         }
         FavoritesBeer beer = RequestBeerAndEntityBeerConverter.convertSaveRequestToFavoritesBeer(requestDto);
-        beerRepository.saveFavoritesBeer(beer);
+        FavoritesBeer save = beerRepository.save(beer);
 
-        return getFavoritesBeerDtoToResponse(userId, userId);
+        return FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(save);
     }
 
     /**

@@ -31,7 +31,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     public List<FavoritesFoodDto> getListOfFoodByBeerId(UUID userId, Long foreignBeerId) {
 
-        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFood(userId));
+        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFoodByBeerId(userId, foreignBeerId));
     }
 
     @Override

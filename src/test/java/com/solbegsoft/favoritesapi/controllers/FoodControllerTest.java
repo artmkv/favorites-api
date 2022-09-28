@@ -47,13 +47,6 @@ class FoodControllerTest extends AbstractControllerTest {
     private FoodRepository foodRepository;
 
     /**
-     * Constructor
-     */
-    public FoodControllerTest() {
-        super("d4ce25e2-22ac-11ed-b5a4-77ac144b4ca4");
-    }
-
-    /**
      * Test with correct method {@link FoodController#getFavoritesFoodByString(UUID, String)}
      * and return Empty list
      *
