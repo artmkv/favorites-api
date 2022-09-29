@@ -66,6 +66,14 @@ class BeerControllerValidationTest extends AbstractValidationTest {
                 .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
 
         mockMvc.perform(
+                        patch("/favorites-api/v1/beers/" + stringBeerId + "/rate/7")
+                                .header("userId", userIdString)
+                )
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
+
+        mockMvc.perform(
                         delete("/favorites-api/v1/beers/" + stringBeerId)
                                 .header("userId", userIdString)
                 )

@@ -3,6 +3,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 import com.solbegsoft.favoritesapi.exceptions.AbstractEntityNotFoundException;
 import com.solbegsoft.favoritesapi.exceptions.BeerEntityNotFoundException;
+import com.solbegsoft.favoritesapi.exceptions.FoodEntityNotFoundException;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 
-import javax.persistence.EntityNotFoundException;
+import javax.validation.ConstraintViolationException;
 
 /**
  * Api Exception Handler
@@ -34,8 +36,11 @@ public class FavoritesApiExceptionHandler {
      * @return {@link ResponseApi}
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseApi<String> handlerEntityNotFoundException(EntityNotFoundException e) {
+    @ExceptionHandler(FoodEntityNotFoundException.class)
+    public ResponseApi<String> handlerFoodNotFoundException(FoodEntityNotFoundException e) {
+
+        String message = messageUtils.getMessage(e.getMessageCode(), e.getObjects());
+        log.info("#EXCEPTION:" + message);
 
         return new ResponseApi<>(e.getMessage());
     }
@@ -50,9 +55,8 @@ public class FavoritesApiExceptionHandler {
     @ExceptionHandler(BeerEntityNotFoundException.class)
     public ResponseApi<String> handlerBeerEntityNotFoundException(BeerEntityNotFoundException e) {
 
-        log.info("#EXCEPTION:" + messageUtils.getMessage(e.getMessageCode(), e.getObjects()));
-
-        String message = e.getMessage();
+        String message = messageUtils.getMessage(e.getMessageCode(), e.getObjects());
+        log.info("#EXCEPTION:" + message);
 
         return new ResponseApi<>(message);
     }
@@ -66,6 +70,32 @@ public class FavoritesApiExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseApi<String> handlerIllegalArgumentException(IllegalArgumentException e) {
+
+        return new ResponseApi<>(e.getMessage());
+    }
+
+    /**
+     * Handle {@link ConstraintViolationException}
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseApi<String> handlerConstraintViolationException(ConstraintViolationException e) {
+
+        return new ResponseApi<>(e.getMessage());
+    }
+
+    /**
+     * Handle {@link HttpClientErrorException.BadRequest}
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpClientErrorException.BadRequest.class)
+    public ResponseApi<String> handlerConstraintViolationException(HttpClientErrorException.BadRequest e) {
 
         return new ResponseApi<>(e.getMessage());
     }

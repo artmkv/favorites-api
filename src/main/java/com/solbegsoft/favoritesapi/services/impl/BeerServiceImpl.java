@@ -118,5 +118,4 @@ public class BeerServiceImpl implements BeerService {
                 .map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer)
                 .orElseThrow(() -> new BeerEntityNotFoundException(ExceptionMessageCodes.ENTITY_NOT_FOUND, beerId));
     }
-
 }
