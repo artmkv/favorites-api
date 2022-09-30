@@ -1,6 +1,7 @@
 package com.solbegsoft.favoritesapi.controllers;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
@@ -15,11 +16,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,10 +33,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Test for {@link FoodController}
  */
-@SpringBootTest
-@AutoConfigureMockMvc
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FoodControllerTest extends AbstractControllerTest {
+
+    @Override
+    protected String getEndPoint() {
+        return "/favorites-api/v1/food" ;
+    }
 
     /**
      * @see FoodRepository
@@ -58,12 +58,11 @@ class FoodControllerTest extends AbstractControllerTest {
     @EmptySource
     @NullSource
     void testGetFavoritesFoodByString_WhenAnyString_ShouldReturnEmptyList(String searchString) throws Exception {
-
         List<FavoritesFood> list = new ArrayList<>();
         when(foodRepository.findAllFavoritesFood(userIdUUID)).thenReturn(list);
 
         mockMvc.perform(
-                        get("/favorites-api/v1/food")
+                        get(getEndPoint())
                                 .header("userId", stringUserId)
                                 .param("search", searchString)
                 )
@@ -85,7 +84,7 @@ class FoodControllerTest extends AbstractControllerTest {
         list.add(createFavoritesFood(userIdUUID, 1L, "Pizza", 5));
         when(foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString)).thenReturn(list);
         mockMvc.perform(
-                        get("/favorites-api/v1/food")
+                        get(getEndPoint())
                                 .header("userId", stringUserId)
                                 .param("search", searchString)
                 )
@@ -107,47 +106,55 @@ class FoodControllerTest extends AbstractControllerTest {
         List<FavoritesFood> list = new ArrayList<>();
         list.add(createFavoritesFood(userIdUUID, 1L, "Pizza", 5));
         list.add(createFavoritesFood(userIdUUID, 2L, "Burger and pizza", 3));
-        when(foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString)).thenReturn(list);
-        mockMvc.perform(
-                        get("/favorites-api/v1/food")
+        List<FavoritesFoodDto> expectedList = FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(list);
+
+        when(foodRepository.findAllFavoritesFood(userIdUUID)).thenReturn(list);
+        String actualAsString = mockMvc.perform(
+                        get(getEndPoint())
                                 .header("userId", stringUserId)
-                                .param("search", searchString)
                 )
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.data[0].text").value("Pizza"))
-                .andExpect(jsonPath("$.data[1].userId").value(stringUserId))
-                .andExpect(jsonPath("$.data[2]").doesNotExist());
+                .andReturn().getResponse().getContentAsString();
+        TypeReference<ResponseApi<List<FavoritesFoodDto>>> typeReference = new TypeReference<>() {
+        };
+        ResponseApi<List<FavoritesFoodDto>> responseListBeers = objectMapper.readValue(actualAsString, typeReference);
+        List<FavoritesFoodDto> actualList = responseListBeers.getData();
+        assertEquals(expectedList, actualList);
     }
 
     /**
      * Test without search string method {@link FoodController#getFavoritesFoodByString(UUID, String)}
      *
-     * @param searchString search string
      * @throws Exception exception
      */
-    @ParameterizedTest
-    @EmptySource
-    @NullSource
-    void testGetFavoritesFoodByString_WithoutSearchStringByUserID_ShouldListWithAllItem(String searchString) throws Exception {
+    @Test
+    void testGetFavoritesFoodByString_WithoutSearchStringByUserID_ShouldListWithAllItem() throws Exception {
         List<FavoritesFood> list = new ArrayList<>();
         list.add(createFavoritesFood(userIdUUID, 1L, "Pizza", 5));
         list.add(createFavoritesFood(userIdUUID, 2L, "Burger and pizza", 3));
         list.add(createFavoritesFood(userIdUUID, 3L, "Spacy Tacos", 2));
+        List<FavoritesFoodDto> expectedList = FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(list);
+
         when(foodRepository.findAllFavoritesFood(userIdUUID)).thenReturn(list);
-        mockMvc.perform(
-                        get("/favorites-api/v1/food")
+
+        String actualAsString = mockMvc.perform(
+                        get(getEndPoint())
                                 .header("userId", stringUserId)
                 )
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(jsonPath("$.data[0].userId").value(stringUserId))
-                .andExpect(jsonPath("$.data[1].userId").value(stringUserId))
-                .andExpect(jsonPath("$.data[2].userId").value(stringUserId))
-                .andExpect(jsonPath("$.data[0].foreignBeerApiId").value(list.get(0).getForeignBeerApiId()))
-                .andExpect(jsonPath("$.data[1].foreignBeerApiId").value(list.get(1).getForeignBeerApiId()))
-                .andExpect(jsonPath("$.data[2].foreignBeerApiId").value(list.get(2).getForeignBeerApiId()))
-                .andExpect(jsonPath("$.data[3]").doesNotExist());
+                .andReturn().getResponse().getContentAsString();
+        TypeReference<ResponseApi<List<FavoritesFoodDto>>> typeReference = new TypeReference<>() {        };
+        ResponseApi<List<FavoritesFoodDto>> responseListBeers = objectMapper.readValue(actualAsString, typeReference);
+        List<FavoritesFoodDto> actualList = responseListBeers.getData();
+        assertEquals(expectedList, actualList);
+    }
+    private <T> T convertObjectAsStringToObject(Class<T> tClass, String objectAsString) throws JsonProcessingException {
+        TypeReference<ResponseApi<T>> typeReference = new TypeReference<>() {
+        };
+        return objectMapper.readValue(objectAsString, typeReference).getData();
+
     }
 
     /**
@@ -160,13 +167,13 @@ class FoodControllerTest extends AbstractControllerTest {
 
         SaveFavoritesFoodRequest request = createSaveRequest(15L, "A", 1);
 
-        FavoritesFoodDto dto = RequestFoodConverter.getFoodDtoFromRequest(userIdUUID, request);
-        FavoritesFood entity = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(dto);
-        dto.setId(UUID.randomUUID());
-        FavoritesFood expected = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(dto);
+        FavoritesFoodDto expected = RequestFoodConverter.getFoodDtoFromRequest(userIdUUID, request);
+        FavoritesFood entity = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(expected);
+        expected.setId(UUID.randomUUID());
+        FavoritesFood returnBeer = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(expected);
 
-        when(foodRepository.save(entity)).thenReturn(expected);
-        String actualAsString = mockMvc.perform(post("/favorites-api/v1/food")
+        when(foodRepository.save(entity)).thenReturn(returnBeer);
+        String actualAsString = mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
@@ -176,12 +183,7 @@ class FoodControllerTest extends AbstractControllerTest {
         TypeReference<ResponseApi<FavoritesFoodDto>> typeReference = new TypeReference<>() {
         };
         FavoritesFoodDto actual = objectMapper.readValue(actualAsString, typeReference).getData();
-
-        assertEquals(expected.getId(), actual.getId());
-        assertEquals(expected.getUserId(), actual.getUserId());
-        assertEquals(expected.getRate(), actual.getRate());
-        assertEquals(expected.getText(), actual.getText());
-        assertEquals(expected.getForeignBeerApiId(), actual.getForeignBeerApiId());
+        assertEquals(expected, actual);
     }
 
     /**
@@ -191,7 +193,7 @@ class FoodControllerTest extends AbstractControllerTest {
      */
     @Test
     void testSaveFavoritesFood_WithEmptyRequest_ShouldReturnStatus4xx() throws Exception {
-        mockMvc.perform(post("/favorites-api/v1/food")
+        mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                 ).andDo(print())
                 .andExpect(status().is4xxClientError());
@@ -205,10 +207,10 @@ class FoodControllerTest extends AbstractControllerTest {
     @Test
     void testDeleteFavoritesFood_WhenEntity_ShouldReturnTrue() throws Exception {
         UUID foodId = UUID.randomUUID();
-        mockMvc.perform(delete("/favorites-api/v1/food/" + foodId)
+        mockMvc.perform(delete(getEndPointWithBeerId(foodId))
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.data").value(Boolean.TRUE));
     }
 

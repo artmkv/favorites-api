@@ -5,7 +5,7 @@ create table favorites_beer
     beer_api_id int8 not null,
     rate        int4,
     user_id     uuid not null,
-    name        varchar(64),
+    name        varchar(64) unique,
     abv         float8,
     ibu         float8,
     ebc         float8,
@@ -14,10 +14,11 @@ create table favorites_beer
 --create food table
 create table favorites_food
 (
-    id          uuid not null,
+    id          uuid not null unique,
     user_id     uuid not null,
     beer_api_id int8 not null,
     rate        int4,
     text        varchar(512),
-    primary key (id)
+    primary key (id),
+    constraint constraint_name unique (user_id, beer_api_id, text)
 );

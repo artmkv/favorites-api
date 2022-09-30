@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi.controllers;
+package com.solbegsoft.favoritesapi;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,4 +20,9 @@ public abstract class AbstractMVCTest {
      */
     @Autowired
     protected MockMvc mockMvc;
+
+    /**
+     * UserId before Authentication
+     */
+    protected static final String stringUserId = "d4ce25e2-22ac-11ed-b5a4-77ac144b4ca4";
 }

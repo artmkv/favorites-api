@@ -87,7 +87,7 @@ public class BeerServiceImpl implements BeerService {
         Long beerId = requestDto.getForeignBeerApiId();
 
         if (beerRepository.findByUserAndBeer(userId, beerId).isPresent()) {
-            throw new EntityExistsException(ExceptionMessageCodes.ENTITY_ALREADY_EXIST.getMessageCode());
+            throw new EntityExistsException(ExceptionMessageCodes.BEER_ALREADY_EXIST.getMessageCode());
         }
         FavoritesBeer beer = RequestBeerAndEntityBeerConverter.convertSaveRequestToFavoritesBeer(requestDto);
         FavoritesBeer save = beerRepository.save(beer);

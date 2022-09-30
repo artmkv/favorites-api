@@ -53,7 +53,7 @@ public class FavoritesBeer {
     /**
      * name
      */
-    @Column
+    @Column(unique = true)
     private String name;
 
     /**

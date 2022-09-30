@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -61,7 +62,7 @@ public class FoodController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseApi<FavoritesFoodDto> saveFavoritesFood(@RequestHeader UUID userId,
-                                                           @RequestBody SaveFavoritesFoodRequest request
+                                                           @RequestBody @Valid SaveFavoritesFoodRequest request
     ) {
         log.info("#POST: Save food by userId {} and by beerId {}", userId, request.getForeignBeerApiId());
         FavoritesFoodDto favoritesFoodDto = RequestFoodConverter.getFoodDtoFromRequest(userId, request);

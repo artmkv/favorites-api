@@ -2,6 +2,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.solbegsoft.favoritesapi.AbstractMVCTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
@@ -18,11 +19,6 @@ public abstract class AbstractControllerTest extends AbstractMVCTest {
     protected ObjectMapper objectMapper;
 
     /**
-     * UserId before Authentication
-     */
-    protected static final String stringUserId = "d4ce25e2-22ac-11ed-b5a4-77ac144b4ca4";
-
-    /**
      * UserId in type UUID
      */
     protected UUID userIdUUID;
@@ -32,5 +28,12 @@ public abstract class AbstractControllerTest extends AbstractMVCTest {
      */
     protected AbstractControllerTest() {
         this.userIdUUID = UUID.fromString(stringUserId);
+    }
+
+
+    protected abstract String getEndPoint();
+
+    protected String getEndPointWithBeerId(UUID id) {
+        return getEndPoint() + "/" + id;
     }
 }

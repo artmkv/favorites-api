@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -26,36 +27,42 @@ public class FoodServiceImpl implements FoodService {
     /**
      * @see FoodRepository
      */
-    private final FoodRepository repository;
+    private final FoodRepository foodRepository;
 
     @Override
     public List<FavoritesFoodDto> getListOfFoodByBeerId(UUID userId, Long foreignBeerId) {
 
-        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFoodByBeerId(userId, foreignBeerId));
+        List<FavoritesFood> resultList = foodRepository.findAllFavoritesFoodByBeerId(userId, foreignBeerId);
+        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(resultList);
     }
 
     @Override
     public List<FavoritesFoodDto> getListOfFoodByString(GetFoodRequestDto dto) {
         UUID userId = dto.getUserId();
+        List<FavoritesFood> resultList;
         if (isExistSearchString(dto)) {
-            List<FavoritesFood> allFavoritesFoodByString = repository.findAllFavoritesFoodByString(userId, dto.getText());
-            return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(allFavoritesFoodByString);
+            resultList = foodRepository.findAllFavoritesFoodByString(userId, dto.getText());
+        } else {
+            resultList = foodRepository.findAllFavoritesFood(userId);
         }
-        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(repository.findAllFavoritesFood(userId));
+        return FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(resultList);
     }
 
     @Override
     public FavoritesFoodDto saveOneFavoritesFood(FavoritesFoodDto dto) {
         FavoritesFood entity = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(dto);
-        FavoritesFood save = repository.save(entity);
-
-        return FavoritesFoodConverter.INSTANCE.getDtoFromFavoritesFood(save);
+        try {
+            FavoritesFood save = foodRepository.save(entity);
+            return FavoritesFoodConverter.INSTANCE.getDtoFromFavoritesFood(save);
+        } catch (RuntimeException e) {
+            throw new EntityExistsException();
+        }
     }
 
     @Override
     public void deleteFavoritesFood(UUID userId, UUID id) {
 
-        repository.deleteOne(userId, id);
+        foodRepository.deleteOne(userId, id);
     }
 
     /**

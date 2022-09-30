@@ -1,8 +1,6 @@
 package com.solbegsoft.favoritesapi.controllers.validation;
 
 
-import com.solbegsoft.favoritesapi.controllers.AbstractMVCTest;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,12 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Validate header UserId in BeerAndFoodControllerTest
  */
-class BeerAndFoodControllerValidationTest extends AbstractMVCTest {
-
-    /**
-     * String UUID beer ID
-     */
-    private final String stringBeerId = "d4ce25e2-22ac-11ed-b5a4-77ac144b4ca4";
+class BeerAndFoodControllerValidationTest extends AbstractValidationTest {
 
     /**
      * Validate header UserID for any values
@@ -52,7 +45,6 @@ class BeerAndFoodControllerValidationTest extends AbstractMVCTest {
                         get("/favorites-api/v1/beer-with-food/" + stringBeerId)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("Body").value(Matchers.nullValue()));
+                .andExpect(status().isBadRequest());
     }
 }
