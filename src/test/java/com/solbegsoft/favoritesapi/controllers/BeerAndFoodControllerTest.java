@@ -55,7 +55,7 @@ class BeerAndFoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testGetFavoritesBeerWithFoodByBeerId_ShouldReturnOKAndBeerAndListFood() throws Exception {
+    void testGetFavoritesBeerWithFoodByBeerId_ShouldReturnStatusOkAndBeerAndListFood() throws Exception {
         FavoritesBeer beer = createFavoritesFood(10L, userIdUUID, 3, "Beer");
         Optional<FavoritesBeer> optionalBeer = Optional.of(beer);
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
@@ -90,7 +90,7 @@ class BeerAndFoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testGetFavoritesBeerWithFoodByBeerId_ShouldReturnBeerAndEmptyListFood() throws Exception {
+    void testGetFavoritesBeerWithFoodByBeerId_ShouldReturnStatusOkAndBeerAndEmptyListFood() throws Exception {
         UUID beerUUID = UUID.randomUUID();
         FavoritesBeer beer = createFavoritesFood(10L, userIdUUID, 3, "Beer");
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
@@ -122,7 +122,7 @@ class BeerAndFoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testGetFavoritesBeerWithFoodByBeerId_WithBeerId_ShouldReturnEmptyBody() throws Exception {
+    void testGetFavoritesBeerWithFoodByBeerId_WithBeerId_ShouldReturnStatusNotFoundAndEmptyBody() throws Exception {
         UUID beerUUID = UUID.randomUUID();
         Optional<FavoritesBeer> optionalBeer = Optional.empty();
 

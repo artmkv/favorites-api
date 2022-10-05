@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 /**
  * Validate header UserId in BeerAndFoodControllerTest
  */
@@ -24,13 +23,13 @@ class BeerAndFoodControllerValidationTest extends AbstractValidationTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"d4ce25e2-22ac-11ed", "___", "3453455!?34r", "ff _-$ 3)"})
-    void testAllEP_WhenNotValidUserId_ShouldStatus4xx(String userIdString) throws Exception {
+    void testAllEP_WhenNotValidUserId_ShouldReturnStatusBadRequest(String userIdString) throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/beer-with-food/" + stringBeerId)
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
     }
 
@@ -40,11 +39,12 @@ class BeerAndFoodControllerValidationTest extends AbstractValidationTest {
      * @throws Exception exception
      */
     @Test
-    void testAllEP_WhenNotExistUserId_ShouldStatus4xx() throws Exception {
+    void testAllEP_WhenNotExistUserId_ShouldReturnStatusBadRequest() throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/beer-with-food/" + stringBeerId)
                 )
                 .andDo(print())
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value("Required request header 'userId' for method parameter type UUID is not present"));
     }
 }

@@ -56,7 +56,7 @@ class FoodControllerTest extends AbstractControllerTest {
     @ValueSource(strings = {"bdfbd", "___", "pizza1", "1pizza"})
     @EmptySource
     @NullSource
-    void testGetFavoritesFoodByString_WhenAnyString_ShouldReturnEmptyList(String searchString) throws Exception {
+    void testGetFavoritesFoodByString_WhenAnyString_ShouldReturnStatusOkAndEmptyList(String searchString) throws Exception {
         List<FavoritesFood> list = new ArrayList<>();
         when(foodRepository.findAllFavoritesFood(userIdUUID)).thenReturn(list);
 
@@ -78,7 +78,7 @@ class FoodControllerTest extends AbstractControllerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"zz", "izz", "pi"})
-    void testGetFavoritesFoodByString_WithCorrectString_ShouldListWithOneItem(String searchString) throws Exception {
+    void testGetFavoritesFoodByString_WithCorrectString_ShouldReturnStatusOkAndListWithOneItem(String searchString) throws Exception {
         List<FavoritesFood> list = new ArrayList<>();
         list.add(createFavoritesFood(userIdUUID, 1L, "Pizza", 5));
         when(foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString)).thenReturn(list);
@@ -101,7 +101,7 @@ class FoodControllerTest extends AbstractControllerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"zz", "izz", "Pi"})
-    void testGetFavoritesFoodByString_WithCorrectString_ShouldListWithTwoItem(String searchString) throws Exception {
+    void testGetFavoritesFoodByString_WithCorrectString_ShouldReturnStatusOkAndListWithTwoItem(String searchString) throws Exception {
         List<FavoritesFood> list = new ArrayList<>();
         list.add(createFavoritesFood(userIdUUID, 1L, "Pizza", 5));
         list.add(createFavoritesFood(userIdUUID, 2L, "Burger and pizza", 3));
@@ -128,7 +128,7 @@ class FoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testGetFavoritesFoodByString_WithoutSearchStringByUserID_ShouldListWithAllItem() throws Exception {
+    void testGetFavoritesFoodByString_WithoutSearchStringByUserID_ShouldReturnStatusOkListWithAllItem() throws Exception {
         List<FavoritesFood> list = new ArrayList<>();
         list.add(createFavoritesFood(userIdUUID, 1L, "Pizza", 5));
         list.add(createFavoritesFood(userIdUUID, 2L, "Burger and pizza", 3));
@@ -199,7 +199,7 @@ class FoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testDeleteFavoritesFood_WhenEntity_ShouldReturnTrue() throws Exception {
+    void testDeleteFavoritesFood_WhenEntity_ShouldReturnStatusAcceptedAndTrue() throws Exception {
         UUID foodId = UUID.randomUUID();
         mockMvc.perform(delete(getEndPointWithBeerId(foodId))
                         .header("userId", stringUserId)

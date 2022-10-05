@@ -2,6 +2,7 @@ package com.solbegsoft.favoritesapi.controllers.validation;
 
 
 import com.solbegsoft.favoritesapi.controllers.FoodController;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
@@ -25,14 +26,14 @@ class FoodControllerValidationTest extends AbstractValidationTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"d4ce25e2-22ac-11ed", "___", "543422", "fdja! y&"})
-    void testAllEP_WhenNotValidUserId_ShouldStatus4xx(String userIdString) throws Exception {
+    void testAllEP_WhenNotValidUserId_ShouldReturnStatusBadRequest(String userIdString) throws Exception {
 
         mockMvc.perform(
                         get("/favorites-api/v1/food")
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
 
         mockMvc.perform(
@@ -40,15 +41,15 @@ class FoodControllerValidationTest extends AbstractValidationTest {
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError())
-                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request body is missing")));
 
         mockMvc.perform(
                         delete("/favorites-api/v1/food/" + stringBeerId)
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
     }
 
@@ -59,27 +60,30 @@ class FoodControllerValidationTest extends AbstractValidationTest {
      */
     @ParameterizedTest
     @EmptySource
-    void testAllEP_WhenEmptyUserId_ShouldStatus4xx(String userIdString) throws Exception {
+    void testAllEP_WhenEmptyUserId_ShouldReturnStatusBadRequest(String userIdString) throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/food")
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value("Required request header 'userId' for method parameter type UUID is not present"));
 
         mockMvc.perform(
                         post("/favorites-api/v1/food")
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request body is missing")));
 
         mockMvc.perform(
                         delete("/favorites-api/v1/food/" + stringBeerId)
                                 .header("userId", userIdString)
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
     }
 
     /**
@@ -88,11 +92,12 @@ class FoodControllerValidationTest extends AbstractValidationTest {
      * @throws Exception exception
      */
     @Test
-    void testAllEP_WhenNotExistUserId_ShouldStatus4xx() throws Exception {
+    void testAllEP_WhenNotExistUserId_ShouldReturnStatusBadRequest() throws Exception {
         mockMvc.perform(
                         get("/favorites-api/v1/food")
                 )
                 .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value("Required request header 'userId' for method parameter type UUID is not present"));
     }
 }

@@ -55,7 +55,7 @@ class BeerControllerTest extends AbstractControllerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"4234r32", "rgedd", "_! !3$"})
-    void testGetBeerFavoritesById_WhenNotCorrectBeerIdInURL_ShouldReturn4xxWithMessage(String stringBeerId) throws Exception {
+    void testGetBeerFavoritesById_WhenNotCorrectBeerIdInURL_ShouldReturnStatusBadRequestWithMessage(String stringBeerId) throws Exception {
 
         mockMvc.perform(get(getEndPoint() + "/" + stringBeerId)
                         .header("userId", stringUserId)
@@ -70,7 +70,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testGetBeerFavoritesById_IfEntityNotExist_ShouldReturn4xxWithMessage() throws Exception {
+    void testGetBeerFavoritesById_IfEntityNotExist_ShouldReturnStatusNotFoundWithMessage() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
 
         when(beerRepository.findOneBeerById(userIdUUID, beer.getId()))
@@ -88,7 +88,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testGetBeerFavoritesById_WhenCorrectRequest_ShouldReturnFavoritesBeer() throws Exception {
+    void testGetBeerFavoritesById_WhenCorrectRequest_ShouldReturnStatusOkAndFavoritesBeer() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
         Optional<FavoritesBeer> optional = Optional.of(beer);
@@ -108,7 +108,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testSaveBeerFavorites_WithoutSaveRequest_ShouldReturnBadRequest() throws Exception {
+    void testSaveBeerFavorites_WithoutSaveRequest_ShouldReturnStatusBadRequest() throws Exception {
         mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                 ).andDo(print())
@@ -122,7 +122,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testSaveBeerFavorites_WithNotCorrectRateInSaveRequest_ShouldReturn4xx() throws Exception {
+    void testSaveBeerFavorites_WithNotCorrectRateInSaveRequest_ShouldReturnStatusBadRequest() throws Exception {
         SaveFavoritesBeerRequest request = createSaveBeerRequest();
         request.setRate(7);
 
@@ -141,7 +141,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testSaveBeerFavorites_WithCorrectSaveRequest_ShouldReturnEntity() throws Exception {
+    void testSaveBeerFavorites_WithCorrectSaveRequest_ShouldReturnStatusCreatedAndEntity() throws Exception {
         SaveFavoritesBeerRequest request = createSaveBeerRequest();
         SaveBeerRequestDto requestDto = RequestBeerConverter.convertToSaveRequestDto(userIdUUID, request);
 
@@ -168,7 +168,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testUpdateRateOfBeerFavorites_WithCorrectUpdateRequest_ShouldReturnAceptedAndFavoritesFoodDto() throws Exception {
+    void testUpdateRateOfBeerFavorites_WithCorrectUpdateRequest_ShouldReturnAcceptedAndFavoritesFoodDto() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
@@ -192,7 +192,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testUpdateRateOfBeerFavorites_WithNotCorrectUpdateRequest_ShouldReturn4xx() throws Exception {
+    void testUpdateRateOfBeerFavorites_WithNotCorrectUpdateRequest_ShouldReturnStatusBadRequest() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
         request.setRate(7);
@@ -211,7 +211,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testUpdateRateOfBeerFavorites_WithCorrectBeerIdAndRateInURL_ShouldReturn2xxAndFavoritesFoodDto() throws Exception {
+    void testUpdateRateOfBeerFavorites_WithCorrectBeerIdAndRateInURL_ShouldReturnStatusAcceptedAndFavoritesFoodDto() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
         Optional<FavoritesBeer> optional = Optional.of(beer);
@@ -233,7 +233,7 @@ class BeerControllerTest extends AbstractControllerTest {
      */
     @ParameterizedTest
     @ValueSource(strings = {"12346", "vsvsv", "__!-"})
-    void testUpdateRateOfBeerFavorites_WithNotCorrectBeerIdAndRateInURL_ShouldReturn4xxAndMessage(String stringBeerId) throws Exception {
+    void testUpdateRateOfBeerFavorites_WithNotCorrectBeerIdAndRateInURL_ShouldReturnStatusBadRequestAndMessage(String stringBeerId) throws Exception {
         mockMvc.perform(patch(getEndPoint() + "/" + stringBeerId + "/rate/" + 7)
                         .header("userId", stringUserId)
                 ).andDo(print())
@@ -247,7 +247,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testUpdateRateOfBeerFavorites_WithNotCorrectRateInURL_ShouldReturnBadRequestAndMessage() throws Exception {
+    void testUpdateRateOfBeerFavorites_WithNotCorrectRateInURL_ShouldReturnStatusBadRequestAndMessage() throws Exception {
         UUID beerId = UUID.randomUUID();
         mockMvc.perform(patch(getEndPoint() + "/" + beerId + "/rate/" + 7)
                         .header("userId", stringUserId)
@@ -262,7 +262,7 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testDeleteBeerFavoritesById() throws Exception {
+    void testDeleteBeerFavoritesById_ShouldReturnStatusAccepted() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         Optional<FavoritesBeer> optional = Optional.of(beer);
 
