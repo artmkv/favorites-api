@@ -1,5 +1,6 @@
 package com.solbegsoft.favoritesapi.services.impl;
 
+
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
@@ -58,8 +59,10 @@ class BeerAndFoodServiceImplTest extends AbstractServiceTest {
         List<FavoritesFood> foods = createListFavoritesFood(userIdUUID);
         List<FavoritesFoodDto> expectedFoods = FavoritesFoodConverter.INSTANCE.getListDtoFromListFavoritesFood(foods);
         ResponseBeerWithFood expected = new ResponseBeerWithFood(expectedBeer, expectedFoods);
+
         when(beerService.getBeerById(userIdUUID, beer.getId())).thenReturn(expectedBeer);
         when(foodService.getListOfFoodByBeerId(userIdUUID, beer.getForeignBeerApiId())).thenReturn(expectedFoods);
+
         ResponseBeerWithFood actual = beerAndFoodService.getBeerWithFoodByBeerId(userIdUUID, beer.getId());
         Assertions.assertEquals(expected, actual);
     }
@@ -74,8 +77,10 @@ class BeerAndFoodServiceImplTest extends AbstractServiceTest {
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
         List<FavoritesFoodDto> expectedFoods = Collections.emptyList();
         ResponseBeerWithFood expected = new ResponseBeerWithFood(expectedBeer, expectedFoods);
+
         when(beerService.getBeerById(userIdUUID, beer.getId())).thenReturn(expectedBeer);
         when(foodService.getListOfFoodByBeerId(userIdUUID, beer.getForeignBeerApiId())).thenReturn(expectedFoods);
+
         ResponseBeerWithFood actual = beerAndFoodService.getBeerWithFoodByBeerId(userIdUUID, beer.getId());
         assertEquals(expected.getBeer(), actual.getBeer());
         assertTrue(actual.getFoods().isEmpty());

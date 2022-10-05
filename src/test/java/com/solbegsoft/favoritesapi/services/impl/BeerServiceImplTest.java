@@ -2,22 +2,31 @@ package com.solbegsoft.favoritesapi.services.impl;
 
 
 import com.solbegsoft.favoritesapi.exceptions.BeerEntityNotFoundException;
+import com.solbegsoft.favoritesapi.exceptions.BeerExistsException;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import com.solbegsoft.favoritesapi.models.requests.SaveFavoritesBeerRequest;
 import com.solbegsoft.favoritesapi.models.requests.UpdateFavoritesBeerRequest;
+import com.solbegsoft.favoritesapi.models.requests.dtos.GetBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
+import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import com.solbegsoft.favoritesapi.repositories.BeerRepository;
 import com.solbegsoft.favoritesapi.services.BeerService;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
+import com.solbegsoft.favoritesapi.utils.RequestBeerAndEntityBeerConverter;
+import com.solbegsoft.favoritesapi.utils.RequestBeerConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -25,9 +34,15 @@ import static org.mockito.Mockito.*;
  */
 class BeerServiceImplTest extends AbstractServiceTest {
 
+    /**
+     * @see BeerService
+     */
     @Autowired
     private BeerService beerService;
 
+    /**
+     * @see BeerRepository
+     */
     @MockBean
     private BeerRepository beerRepository;
 
@@ -35,7 +50,7 @@ class BeerServiceImplTest extends AbstractServiceTest {
      * Test {@link BeerService#getBeerById(UUID, UUID)}
      */
     @Test
-    void getBeerById_ShouldReturnFavoritesBeer() {
+    void testGetBeerById_ShouldReturnFavoritesBeer() {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 4, "Beer");
         Optional<FavoritesBeer> optional = Optional.of(beer);
         FavoritesBeerDto expected = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
@@ -50,47 +65,193 @@ class BeerServiceImplTest extends AbstractServiceTest {
      * Test {@link BeerService#getBeerById(UUID, UUID)}
      */
     @Test
-    void getBeerById_ShouldThrowBeerEntityNotFoundException() {
+    void testGetBeerById_ShouldThrowBeerEntityNotFoundException() {
         UUID beerId = UUID.randomUUID();
         Optional<FavoritesBeer> optional = Optional.empty();
 
         when(beerRepository.findOneBeerById(userIdUUID, beerId)).thenReturn(optional);
 
-        assertThrows(BeerEntityNotFoundException.class, () -> {
-            beerService.getBeerById(userIdUUID, beerId);
-        });
+        assertThrows(BeerEntityNotFoundException.class, () -> beerService.getBeerById(userIdUUID, beerId));
     }
 
-
+    /**
+     * Test method {@link BeerService#getAllBeersByRate(GetBeerRequestDto)}
+     */
     @Test
-    void getAllBeersByRate() {
+    void testGetAllBeersByRate_WithRateAndWithDefaultPageable_ShouldReturnPageOfFavoritesBeer() {
+        Integer[] rate = {1, 2, 3, 4, 5};
+        Pageable pageable = getDefaultPageable();
+        GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(userIdUUID, rate, pageable);
+        List<FavoritesBeer> list = createListOfFavoritesBeer();
+        Page<FavoritesBeer> page = new PageImpl<>(list, pageable, list.size());
+        Page<FavoritesBeerDto> expected = page.map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer);
 
+        when(beerRepository.findAllBySetRatesWithPagination(requestDto, requestDto.getPageable())).thenReturn(page);
+
+        Page<FavoritesBeerDto> actual = beerService.getAllBeersByRate(requestDto);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Test method {@link BeerService#getAllBeersByRate(GetBeerRequestDto)}
+     */
+    @Test
+    void testGetAllBeersByRate_WithRateAndWithDefaultPageable_ShouldReturnEmptyPage() {
+        Integer[] rate = {1, 2, 3, 4, 5};
+        Pageable pageable = getDefaultPageable();
+        GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(userIdUUID, rate, pageable);
+        Page<FavoritesBeer> page = Page.empty(pageable);
+
+        when(beerRepository.findAllBySetRatesWithPagination(requestDto, requestDto.getPageable())).thenReturn(page);
+
+        Page<FavoritesBeerDto> actual = beerService.getAllBeersByRate(requestDto);
+        assertTrue(actual.isEmpty());
+    }
+
+    /**
+     * Test method {@link BeerService#getAllBeersByRate(GetBeerRequestDto)}
+     */
+    @Test
+    void testGetAllBeersByRate_WithoutRateAndWithDefaultPageable_ShouldReturnPageOfFavoritesBeer() {
+        Integer[] rate = {};
+        Pageable pageable = getDefaultPageable();
+        GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(userIdUUID, rate, pageable);
+        List<FavoritesBeer> list = createListOfFavoritesBeer();
+        Page<FavoritesBeer> page = new PageImpl<>(list, pageable, list.size());
+        Page<FavoritesBeerDto> expected = page.map(FavoritesBeerConverter.INSTANCE::toDtoFromFavoritesBeer);
+
+        when(beerRepository.findAllWithPagination(requestDto, requestDto.getPageable())).thenReturn(page);
+
+        Page<FavoritesBeerDto> actual = beerService.getAllBeersByRate(requestDto);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Test method {@link BeerService#getAllBeersByRate(GetBeerRequestDto)}
+     */
+    @Test
+    void testGetAllBeersByRate_WithoutRateAndWithDefaultPageable_ShouldReturnEmptyPageOfFavoritesBeer() {
+        Integer[] rate = {};
+        Pageable pageable = getDefaultPageable();
+        GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(userIdUUID, rate, pageable);
+        Page<FavoritesBeer> page = Page.empty(pageable);
+
+        when(beerRepository.findAllWithPagination(requestDto, requestDto.getPageable())).thenReturn(page);
+
+        Page<FavoritesBeerDto> actual = beerService.getAllBeersByRate(requestDto);
+        assertTrue(actual.isEmpty());
+    }
+
+    /**
+     * Test method {@link BeerService#updateRateFavoritesBeer(UpdateBeerRequestDto)}
+     */
+    @Test
+    void testUpdateRateFavoritesBeer_WithRequest_ShouldReturnFavoritesBeer() {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
-        Integer[] rate = {1, 5};
+        UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
+        UpdateBeerRequestDto requestDto = RequestBeerConverter.convertToUpdateRequestDto(userIdUUID, beer.getId(), request);
+        FavoritesBeerDto expected = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
+        Optional<FavoritesBeer> optional = Optional.of(beer);
 
+        when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
+
+        FavoritesBeerDto actual = beerService.updateRateFavoritesBeer(requestDto);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Test method {@link BeerService#updateRateFavoritesBeer(UpdateBeerRequestDto)}
+     */
+    @Test
+    void testUpdateRateFavoritesBeer_WithRequest_ShouldReturnException() {
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
+        UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
+        UpdateBeerRequestDto requestDto = RequestBeerConverter.convertToUpdateRequestDto(userIdUUID, beer.getId(), request);
+        Optional<FavoritesBeer> optional = Optional.empty();
+
+        when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
+
+        assertThrows(BeerEntityNotFoundException.class, () -> beerService.updateFavoriteBeer(requestDto));
+    }
+
+    /**
+     * Test method {@link BeerService#updateFavoriteBeer(UpdateBeerRequestDto)}
+     */
+    @Test
+    void testUpdateFavoriteBeer_ShouldReturnFavoriteBeer() {
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
+        UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
+        UpdateBeerRequestDto requestDto = RequestBeerConverter.convertToUpdateRequestDto(userIdUUID, beer.getId(), request);
+        Optional<FavoritesBeer> optional = Optional.of(beer);
+        FavoritesBeerDto expected = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
+
+        when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
+
+        FavoritesBeerDto actual = beerService.updateFavoriteBeer(requestDto);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Test method {@link BeerService#updateFavoriteBeer(UpdateBeerRequestDto)}
+     */
+    @Test
+    void testUpdateFavoriteBeer_ShouldReturnException() {
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
+        UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
+        UpdateBeerRequestDto requestDto = RequestBeerConverter.convertToUpdateRequestDto(userIdUUID, beer.getId(), request);
+        Optional<FavoritesBeer> optional = Optional.empty();
+
+        when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
+
+        assertThrows(BeerEntityNotFoundException.class, () -> beerService.updateFavoriteBeer(requestDto));
+    }
+
+    /**
+     * Test method {@link BeerService#saveFavoriteBeer(SaveBeerRequestDto)}
+     */
+    @Test
+    void testSaveFavoriteBeer_ShouldReturnFavoritesBeer() {
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 4, "Beer");
+        SaveFavoritesBeerRequest request = createSaveBeerRequest(beer);
+        SaveBeerRequestDto requestDto = RequestBeerConverter.convertToSaveRequestDto(userIdUUID, request);
+        FavoritesBeer beerToSave = RequestBeerAndEntityBeerConverter.convertSaveRequestToFavoritesBeer(requestDto);
+        Optional<FavoritesBeer> optional = Optional.empty();
+        FavoritesBeerDto expected = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
+
+        when(beerRepository.findByUserAndBeer(userIdUUID, beer.getForeignBeerApiId())).thenReturn(optional);
+        when(beerRepository.save(beerToSave)).thenReturn(beer);
+
+        FavoritesBeerDto actual = beerService.saveFavoriteBeer(requestDto);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Test method {@link BeerService#saveFavoriteBeer(SaveBeerRequestDto)}
+     */
+    @Test
+    void testSaveFavoriteBeer_ShouldReturnException() {
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 4, "Beer");
+        SaveFavoritesBeerRequest request = createSaveBeerRequest(beer);
+        SaveBeerRequestDto requestDto = RequestBeerConverter.convertToSaveRequestDto(userIdUUID, request);
+        Optional<FavoritesBeer> optional = Optional.of(beer);
+
+        when(beerRepository.findByUserAndBeer(userIdUUID, beer.getForeignBeerApiId())).thenReturn(optional);
+
+        assertThrows(BeerExistsException.class, () -> beerService.saveFavoriteBeer(requestDto));
     }
 
     /**
      * Test method {@link BeerService#deleteFavoriteBeer(UUID, UUID)}
      */
     @Test
-    void deleteFavoriteBeer() {
-        UUID beerId = UUID.randomUUID();
-        beerService.deleteFavoriteBeer(userIdUUID, beerId);
-        verify(beerRepository, times(1)).deleteOne(userIdUUID, beerId);
-    }
+    void testDeleteFavoriteBeer() {
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
+        Optional<FavoritesBeer> optional = Optional.of(beer);
 
-    @Test
-    void updateRateFavoritesBeer() {
+        when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
 
-    }
-
-    @Test
-    void updateFavoriteBeer() {
-    }
-
-    @Test
-    void saveFavoriteBeer() {
+        beerService.deleteFavoriteBeer(userIdUUID, beer.getId());
+        verify(beerRepository, times(1)).deleteOne(userIdUUID, beer.getId());
     }
 
     /**
@@ -148,5 +309,30 @@ class BeerServiceImplTest extends AbstractServiceTest {
         request.setEbc(beer.getEbc());
         request.setIbu(beer.getIbu());
         return request;
+    }
+
+    /**
+     * Create List of FavoritesBeer
+     *
+     * @return List of {@link FavoritesBeer}
+     */
+    private List<FavoritesBeer> createListOfFavoritesBeer() {
+        List<FavoritesBeer> list = new ArrayList<>();
+        list.add(createFavoritesBeer(10L, userIdUUID, 3, "Beer1"));
+        list.add(createFavoritesBeer(11L, userIdUUID, 4, "Beer2"));
+        list.add(createFavoritesBeer(12L, userIdUUID, 5, "Beer3"));
+        list.add(createFavoritesBeer(13L, userIdUUID, 5, "Beer4"));
+        list.add(createFavoritesBeer(14L, userIdUUID, 4, "Beer5"));
+        return list;
+    }
+
+    /**
+     * Default Pageable
+     *
+     * @return Pageable
+     */
+    private Pageable getDefaultPageable() {
+
+        return PageRequest.of(0, 20, Sort.by("id"));
     }
 }

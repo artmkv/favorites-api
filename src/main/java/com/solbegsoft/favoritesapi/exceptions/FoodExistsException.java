@@ -2,13 +2,11 @@ package com.solbegsoft.favoritesapi.exceptions;
 
 
 import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
-import lombok.Getter;
 
 /**
- * Exception food entity not found
+ * FoodExistsException
  */
-@Getter
-public class FoodEntityNotFoundException extends AbstractEntityException {
+public class FoodExistsException extends AbstractEntityExistsException {
 
     /**
      * Array objects to inject into a message
@@ -21,7 +19,7 @@ public class FoodEntityNotFoundException extends AbstractEntityException {
      * @param messageCodes {@link ExceptionMessageCodes}
      * @param objects objects
      */
-    public FoodEntityNotFoundException(ExceptionMessageCodes messageCodes, Object... objects) {
+    public FoodExistsException(ExceptionMessageCodes messageCodes, Object... objects) {
         super(messageCodes);
         this.objects = objects;
     }

@@ -8,10 +8,10 @@ import com.solbegsoft.favoritesapi.models.requests.dtos.SaveBeerRequestDto;
 import com.solbegsoft.favoritesapi.models.requests.dtos.UpdateBeerRequestDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import org.mapstruct.ap.internal.util.Collections;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -33,7 +33,7 @@ public class RequestBeerConverter {
 
         return GetBeerRequestDto.builder()
                 .userId(userId)
-                .rate( Collections.asSet(rateArray))
+                .rate(Set.of(rateArray))
                 .pageable(pageable)
                 .build();
     }

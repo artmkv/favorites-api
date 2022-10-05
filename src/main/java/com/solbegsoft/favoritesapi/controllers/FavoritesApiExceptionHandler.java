@@ -2,14 +2,13 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
-import com.solbegsoft.favoritesapi.exceptions.AbstractEntityNotFoundException;
-import com.solbegsoft.favoritesapi.exceptions.BeerEntityNotFoundException;
-import com.solbegsoft.favoritesapi.exceptions.FoodEntityNotFoundException;
+import com.solbegsoft.favoritesapi.exceptions.*;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
-import javax.persistence.EntityExistsException;
 import javax.validation.ConstraintViolationException;
 import java.lang.reflect.InvocationTargetException;
 
@@ -51,7 +49,7 @@ public class FavoritesApiExceptionHandler {
     }
 
     /**
-     * Handle {@link AbstractEntityNotFoundException}
+     * Handle {@link AbstractEntityException}
      *
      * @param e exception
      * @return {@link ResponseApi}
@@ -92,6 +90,12 @@ public class FavoritesApiExceptionHandler {
         return new ResponseApi<>(e.getMessage());
     }
 
+    /**
+     * Handler InvocationTargetException
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvocationTargetException.class)
     public ResponseApi<String> handlerInvocationTargetException(InvocationTargetException e) {
@@ -112,6 +116,12 @@ public class FavoritesApiExceptionHandler {
         return new ResponseApi<>(e.getMessage());
     }
 
+    /**
+     * Handler {@link MethodArgumentNotValidException}
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseApi<String> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -119,7 +129,6 @@ public class FavoritesApiExceptionHandler {
 
         return new ResponseApi<>(messageUtils.getMessage(messageCode, e.getParameter().getParameterName()));
     }
-
 
     /**
      * Handle {@link HttpClientErrorException.BadRequest}
@@ -134,12 +143,46 @@ public class FavoritesApiExceptionHandler {
         return new ResponseApi<>(e.getMessage());
     }
 
+    /**
+     * Handler {@link FoodExistsException}
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(EntityExistsException.class)
-    public ResponseApi<String> handlerPSQLException(EntityExistsException e) {
+    @ExceptionHandler(FoodExistsException.class)
+    public ResponseApi<String> handlerFoodExistsException(FoodExistsException e) {
 
         String messageCode = ExceptionMessageCodes.FOOD_ALREADY_EXIST.getMessageCode();
 
         return new ResponseApi<>(messageUtils.getMessage(messageCode, e.getMessage()));
+    }
+
+    /**
+     * Handler {@link BeerExistsException}
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BeerExistsException.class)
+    public ResponseApi<String> handlerBeerExistsException(BeerExistsException e) {
+
+        String messageCode = ExceptionMessageCodes.BEER_ALREADY_EXIST.getMessageCode();
+
+        return new ResponseApi<>(messageUtils.getMessage(messageCode, e.getMessage()));
+    }
+
+    /**
+     * Handler HttpMessageConversionException
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public ResponseApi<String> handlerHttpMessageConversionException(HttpMessageConversionException e) {
+
+        return new ResponseApi<>(e.getMessage());
     }
 }

@@ -30,9 +30,18 @@ public abstract class AbstractControllerTest extends AbstractMVCTest {
         this.userIdUUID = UUID.fromString(stringUserId);
     }
 
-
+    /**
+     * Get End Point
+     *
+     * @return String
+     */
     protected abstract String getEndPoint();
 
+    /**
+     * Get End Point with "/"
+     * @param id ID in URl
+     * @return String
+     */
     protected String getEndPointWithBeerId(UUID id) {
         return getEndPoint() + "/" + id;
     }

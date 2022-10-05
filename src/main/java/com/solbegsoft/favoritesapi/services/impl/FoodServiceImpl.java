@@ -1,6 +1,8 @@
 package com.solbegsoft.favoritesapi.services.impl;
 
 
+import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
+import com.solbegsoft.favoritesapi.exceptions.FoodExistsException;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
 import com.solbegsoft.favoritesapi.models.requests.dtos.GetFoodRequestDto;
@@ -11,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -55,7 +56,7 @@ public class FoodServiceImpl implements FoodService {
             FavoritesFood save = foodRepository.save(entity);
             return FavoritesFoodConverter.INSTANCE.getDtoFromFavoritesFood(save);
         } catch (RuntimeException e) {
-            throw new EntityExistsException();
+            throw new FoodExistsException(ExceptionMessageCodes.FOOD_ALREADY_EXIST);
         }
     }
 

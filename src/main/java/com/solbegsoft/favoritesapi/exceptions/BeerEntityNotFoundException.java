@@ -8,7 +8,7 @@ import lombok.Getter;
  * Exception beer entity not found
  */
 @Getter
-public class BeerEntityNotFoundException extends AbstractEntityNotFoundException {
+public class BeerEntityNotFoundException extends AbstractEntityException {
 
     /**
      * Array objects to inject into a message

@@ -1,7 +1,6 @@
 package com.solbegsoft.favoritesapi.controllers;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
@@ -35,16 +34,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 class FoodControllerTest extends AbstractControllerTest {
 
-    @Override
-    protected String getEndPoint() {
-        return "/favorites-api/v1/food" ;
-    }
-
     /**
      * @see FoodRepository
      */
     @MockBean
     private FoodRepository foodRepository;
+
+    @Override
+    protected String getEndPoint() {
+        return "/favorites-api/v1/food" ;
+    }
 
     /**
      * Test with correct method {@link FoodController#getFavoritesFoodByString(UUID, String)}
@@ -67,7 +66,7 @@ class FoodControllerTest extends AbstractControllerTest {
                                 .param("search", searchString)
                 )
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data").value(Matchers.empty()));
     }
 
@@ -89,7 +88,7 @@ class FoodControllerTest extends AbstractControllerTest {
                                 .param("search", searchString)
                 )
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].text").value("Pizza"))
                 .andExpect(jsonPath("$.data[1]").doesNotExist());
     }
@@ -114,7 +113,7 @@ class FoodControllerTest extends AbstractControllerTest {
                                 .header("userId", stringUserId)
                 )
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         TypeReference<ResponseApi<List<FavoritesFoodDto>>> typeReference = new TypeReference<>() {
         };
@@ -143,18 +142,12 @@ class FoodControllerTest extends AbstractControllerTest {
                                 .header("userId", stringUserId)
                 )
                 .andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         TypeReference<ResponseApi<List<FavoritesFoodDto>>> typeReference = new TypeReference<>() {        };
         ResponseApi<List<FavoritesFoodDto>> responseListBeers = objectMapper.readValue(actualAsString, typeReference);
         List<FavoritesFoodDto> actualList = responseListBeers.getData();
         assertEquals(expectedList, actualList);
-    }
-    private <T> T convertObjectAsStringToObject(Class<T> tClass, String objectAsString) throws JsonProcessingException {
-        TypeReference<ResponseApi<T>> typeReference = new TypeReference<>() {
-        };
-        return objectMapper.readValue(objectAsString, typeReference).getData();
-
     }
 
     /**
@@ -163,7 +156,7 @@ class FoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testSaveFavoritesFood_WithCorrectRequest_ShouldReturnStatus2xxWithFavoritesFoodDto() throws Exception {
+    void testSaveFavoritesFood_WithCorrectRequest_ShouldReturnStatusCreatedWithFavoritesFoodDto() throws Exception {
 
         SaveFavoritesFoodRequest request = createSaveRequest(15L, "A", 1);
 
@@ -178,7 +171,7 @@ class FoodControllerTest extends AbstractControllerTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         TypeReference<ResponseApi<FavoritesFoodDto>> typeReference = new TypeReference<>() {
         };
@@ -192,11 +185,12 @@ class FoodControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testSaveFavoritesFood_WithEmptyRequest_ShouldReturnStatus4xx() throws Exception {
+    void testSaveFavoritesFood_WithEmptyRequest_ShouldReturnStatusBadRequest() throws Exception {
         mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request body is missing")));
     }
 
     /**

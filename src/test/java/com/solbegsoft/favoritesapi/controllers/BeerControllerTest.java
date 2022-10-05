@@ -15,18 +15,18 @@ import com.solbegsoft.favoritesapi.repositories.BeerRepository;
 import com.solbegsoft.favoritesapi.utils.FavoritesBeerConverter;
 import com.solbegsoft.favoritesapi.utils.RequestBeerAndEntityBeerConverter;
 import com.solbegsoft.favoritesapi.utils.RequestBeerConverter;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,10 +43,10 @@ class BeerControllerTest extends AbstractControllerTest {
     @MockBean
     private BeerRepository beerRepository;
 
-    /**
-     * Start URl for {@link BeerController}
-     */
-    private final static String startURL = "/favorites-api/v1/beers";
+    @Override
+    protected String getEndPoint() {
+        return "/favorites-api/v1/beers";
+    }
 
     /**
      * Test method {@link BeerController#getBeerFavoritesById(UUID, UUID)}
@@ -57,10 +57,10 @@ class BeerControllerTest extends AbstractControllerTest {
     @ValueSource(strings = {"4234r32", "rgedd", "_! !3$"})
     void testGetBeerFavoritesById_WhenNotCorrectBeerIdInURL_ShouldReturn4xxWithMessage(String stringBeerId) throws Exception {
 
-        mockMvc.perform(get(startURL + "/" + stringBeerId)
+        mockMvc.perform(get(getEndPoint() + "/" + stringBeerId)
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.data").value("Invalid UUID string: " + stringBeerId));
     }
 
@@ -75,10 +75,10 @@ class BeerControllerTest extends AbstractControllerTest {
 
         when(beerRepository.findOneBeerById(userIdUUID, beer.getId()))
                 .thenThrow(new BeerEntityNotFoundException(ExceptionMessageCodes.ENTITY_NOT_FOUND, beer.getId()));
-        mockMvc.perform(get(startURL + "/" + beer.getId())
+        mockMvc.perform(get(getEndPoint() + "/" + beer.getId())
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.data").value("Not found entity with id " + beer.getId() + "."));
     }
 
@@ -94,10 +94,10 @@ class BeerControllerTest extends AbstractControllerTest {
         Optional<FavoritesBeer> optional = Optional.of(beer);
 
         when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
-        String actualAsString = mockMvc.perform(post(startURL + "/" + beer.getId())
+        String actualAsString = mockMvc.perform(get(getEndPoint() + "/" + beer.getId())
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
         checkEqualsExpectedFavoritesBeerDtoAndActualString(expectedBeer, actualAsString);
     }
@@ -108,11 +108,12 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testSaveBeerFavorites_WithoutSaveRequest_ShouldReturn4xx() throws Exception {
-        mockMvc.perform(post(startURL)
+    void testSaveBeerFavorites_WithoutSaveRequest_ShouldReturnBadRequest() throws Exception {
+        mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request body is missing")));
     }
 
     /**
@@ -125,12 +126,13 @@ class BeerControllerTest extends AbstractControllerTest {
         SaveFavoritesBeerRequest request = createSaveBeerRequest();
         request.setRate(7);
 
-        mockMvc.perform(post(startURL)
+        mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.data").value("Invalid argument: request"));
     }
 
     /**
@@ -149,12 +151,13 @@ class BeerControllerTest extends AbstractControllerTest {
         FavoritesBeerDto expected = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(savedBeer);
 
         when(beerRepository.save(beer)).thenReturn(savedBeer);
-        String actualAsString = mockMvc.perform(post(startURL)
+
+        String actualAsString = mockMvc.perform(post(getEndPoint())
                         .header("userId", stringUserId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
         checkEqualsExpectedFavoritesBeerDtoAndActualString(expected, actualAsString);
     }
@@ -165,18 +168,20 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testUpdateRateOfBeerFavorites_WithCorrectUpdateRequest_ShouldReturn2xxAndFavoritesFoodDto() throws Exception {
+    void testUpdateRateOfBeerFavorites_WithCorrectUpdateRequest_ShouldReturnAceptedAndFavoritesFoodDto() throws Exception {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
         Optional<FavoritesBeer> optional = Optional.of(beer);
+
         when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
-        String actualAsString = mockMvc.perform(patch(startURL + "/" + beer.getId())
+
+        String actualAsString = mockMvc.perform(patch(getEndPoint() + "/" + beer.getId())
                         .header("userId", stringUserId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isAccepted())
                 .andReturn().getResponse().getContentAsString();
         checkEqualsExpectedFavoritesBeerDtoAndActualString(expectedBeer, actualAsString);
     }
@@ -191,12 +196,13 @@ class BeerControllerTest extends AbstractControllerTest {
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
         UpdateFavoritesBeerRequest request = createUpdateFavoritesBeerRequest(beer);
         request.setRate(7);
-        mockMvc.perform(patch(startURL + "/" + beer.getId())
+        mockMvc.perform(patch(getEndPoint() + "/" + beer.getId())
                         .header("userId", stringUserId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("data").value("Invalid argument: request"));
     }
 
     /**
@@ -211,10 +217,10 @@ class BeerControllerTest extends AbstractControllerTest {
         Optional<FavoritesBeer> optional = Optional.of(beer);
         when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
 
-        String actualAsString = mockMvc.perform(patch(startURL + "/" + beer.getId() + "/rate/" + beer.getRate())
+        String actualAsString = mockMvc.perform(patch(getEndPoint() + "/" + beer.getId() + "/rate/" + beer.getRate())
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isAccepted())
                 .andReturn().getResponse().getContentAsString();
 
         checkEqualsExpectedFavoritesBeerDtoAndActualString(expectedBeer, actualAsString);
@@ -228,10 +234,10 @@ class BeerControllerTest extends AbstractControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"12346", "vsvsv", "__!-"})
     void testUpdateRateOfBeerFavorites_WithNotCorrectBeerIdAndRateInURL_ShouldReturn4xxAndMessage(String stringBeerId) throws Exception {
-        mockMvc.perform(patch(startURL + "/" + stringBeerId + "/rate/" + 7)
+        mockMvc.perform(patch(getEndPoint() + "/" + stringBeerId + "/rate/" + 7)
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.data").value("Invalid UUID string: " + stringBeerId));
     }
 
@@ -241,12 +247,12 @@ class BeerControllerTest extends AbstractControllerTest {
      * @throws Exception exception
      */
     @Test
-    void testUpdateRateOfBeerFavorites_WithNotCorrectRateInURL_ShouldReturn4xxAndMessage() throws Exception {
+    void testUpdateRateOfBeerFavorites_WithNotCorrectRateInURL_ShouldReturnBadRequestAndMessage() throws Exception {
         UUID beerId = UUID.randomUUID();
-        mockMvc.perform(patch(startURL + "/" + beerId + "/rate/" + 7)
+        mockMvc.perform(patch(getEndPoint() + "/" + beerId + "/rate/" + 7)
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is4xxClientError())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.data").value("updateRateOfBeerFavorites.rate: must be less than or equal to 5"));
     }
 
@@ -257,13 +263,17 @@ class BeerControllerTest extends AbstractControllerTest {
      */
     @Test
     void testDeleteBeerFavoritesById() throws Exception {
-        UUID beerId = UUID.randomUUID();
+        FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 5, "Beer");
+        Optional<FavoritesBeer> optional = Optional.of(beer);
 
-        mockMvc.perform(delete(startURL + "/" + beerId)
+        when(beerRepository.findOneBeerById(userIdUUID, beer.getId())).thenReturn(optional);
+
+        mockMvc.perform(delete(getEndPoint() + "/" + beer.getId())
                         .header("userId", stringUserId)
                 ).andDo(print())
-                .andExpect(status().is2xxSuccessful())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.data").value(Boolean.TRUE));
+        verify(beerRepository, times(1)).deleteOne(userIdUUID, beer.getId());
     }
 
     /**
@@ -323,23 +333,6 @@ class BeerControllerTest extends AbstractControllerTest {
     }
 
     /**
-     * Create {@link SaveFavoritesBeerRequest}
-     *
-     * @param beer {@link FavoritesBeer}
-     * @return {@link SaveFavoritesBeerRequest}
-     */
-    private SaveFavoritesBeerRequest createSaveBeerRequest(FavoritesBeer beer) {
-        SaveFavoritesBeerRequest request = new SaveFavoritesBeerRequest();
-        request.setForeignBeerApiId(beer.getForeignBeerApiId());
-        request.setName(beer.getName());
-        request.setRate(beer.getRate());
-        request.setAbv(beer.getAbv());
-        request.setEbc(beer.getEbc());
-        request.setIbu(beer.getIbu());
-        return request;
-    }
-
-    /**
      * Check all field of Favorites Beer
      *
      * @param expected expected {@link FavoritesBeerDto}
@@ -368,23 +361,5 @@ class BeerControllerTest extends AbstractControllerTest {
         };
         FavoritesBeerDto actualBeer = objectMapper.readValue(actualAsString, typeReference).getData();
         checkAssertionsEqualsFieldsOfFavoritesBeerDto(expectedBeer, actualBeer);
-    }
-
-    /**
-     * Ckeck list of {@link FavoritesBeerDto} and actual string
-     *
-     * @param expectedList   expected {@link FavoritesBeerDto}
-     * @param actualAsString string as JSON to parsing
-     * @throws JsonProcessingException exception
-     */
-    private void checkEqualsExpectedListFavoritesBeerDtoAndActualString(List<FavoritesBeerDto> expectedList, String actualAsString) throws JsonProcessingException {
-        TypeReference<ResponseApi<List<FavoritesBeerDto>>> typeReference = new TypeReference<>() {
-        };
-        ResponseApi<List<FavoritesBeerDto>> responseListBeers = objectMapper.readValue(actualAsString, typeReference);
-        List<FavoritesBeerDto> actualList = responseListBeers.getData();
-        assertEquals(expectedList.size(), actualList.size());
-        for (int i = 0; i < expectedList.size(); i++) {
-            checkAssertionsEqualsFieldsOfFavoritesBeerDto(expectedList.get(i), actualList.get(i));
-        }
     }
 }

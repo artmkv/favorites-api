@@ -14,7 +14,6 @@ import java.util.UUID;
 @SuperBuilder
 public class UpdateBeerRequestDto extends BaseRequestDto {
 
-
     /**
      * ID
      */

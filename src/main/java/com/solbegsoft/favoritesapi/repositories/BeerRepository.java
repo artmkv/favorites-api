@@ -85,17 +85,6 @@ public interface BeerRepository extends JpaRepository<FavoritesBeer, UUID> {
     void updateFavoritesBeer(@Param("entity") FavoritesBeer entity);
 
     /**
-     * Save Favorites beer
-     *
-     * @param entity {@link FavoritesBeer}
-     */
-    @Modifying
-    @Query(nativeQuery = true,
-            value = "insert into favorites_beer(user_id, beer_api_id, rate, name, abv, ibu, ebc) " +
-                    "values(:#{#entity.userId}, :#{#entity.foreignBeerApiId}, :#{#entity.rate}, :#{#entity.name}, :#{#entity.abv}, :#{#entity.ibu}, :#{#entity.ebc})")
-    void saveFavoritesBeer(@Param("entity") FavoritesBeer entity);
-
-    /**
      * Find Favorites beer by User and Beer
      *
      * @param userId           User ID

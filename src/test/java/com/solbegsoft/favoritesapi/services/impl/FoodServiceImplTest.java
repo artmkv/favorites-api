@@ -1,6 +1,8 @@
 package com.solbegsoft.favoritesapi.services.impl;
 
 
+import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
+import com.solbegsoft.favoritesapi.exceptions.FoodExistsException;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
@@ -9,7 +11,6 @@ import com.solbegsoft.favoritesapi.repositories.FoodRepository;
 import com.solbegsoft.favoritesapi.services.FoodService;
 import com.solbegsoft.favoritesapi.utils.FavoritesFoodConverter;
 import com.solbegsoft.favoritesapi.utils.RequestFoodConverter;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
@@ -22,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -55,7 +57,7 @@ class FoodServiceImplTest extends AbstractServiceTest {
         when(foodRepository.findAllFavoritesFoodByBeerId(userIdUUID, foreignBeerId)).thenReturn(list);
 
         List<FavoritesFoodDto> actualList = foodService.getListOfFoodByBeerId(userIdUUID, foreignBeerId);
-        Assertions.assertEquals(expectedList, actualList);
+        assertEquals(expectedList, actualList);
     }
 
     /**
@@ -69,7 +71,7 @@ class FoodServiceImplTest extends AbstractServiceTest {
         when(foodRepository.findAllFavoritesFoodByBeerId(userIdUUID, foreignBeerId)).thenReturn(list);
 
         List<FavoritesFoodDto> actualList = foodService.getListOfFoodByBeerId(userIdUUID, foreignBeerId);
-        Assertions.assertTrue(actualList.isEmpty());
+        assertTrue(actualList.isEmpty());
 
     }
 
@@ -88,7 +90,7 @@ class FoodServiceImplTest extends AbstractServiceTest {
         when(foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString)).thenReturn(list);
 
         List<FavoritesFoodDto> actualList = foodService.getListOfFoodByString(requestDto);
-        Assertions.assertEquals(expectedList, actualList);
+        assertEquals(expectedList, actualList);
     }
 
     /**
@@ -105,7 +107,7 @@ class FoodServiceImplTest extends AbstractServiceTest {
         when(foodRepository.findAllFavoritesFood(userIdUUID)).thenReturn(list);
 
         List<FavoritesFoodDto> actualList = foodService.getListOfFoodByString(requestDto);
-        Assertions.assertEquals(expectedList, actualList);
+        assertEquals(expectedList, actualList);
     }
 
     /**
@@ -119,7 +121,20 @@ class FoodServiceImplTest extends AbstractServiceTest {
         when(foodRepository.save(food)).thenReturn(food);
 
         FavoritesFoodDto actual = foodService.saveOneFavoritesFood(expected);
-        Assertions.assertEquals(expected, actual);
+        assertEquals(expected, actual);
+    }
+
+    /**
+     * Test with correct request Method {@link FoodService#saveOneFavoritesFood(FavoritesFoodDto)}
+     */
+    @Test
+    void testSaveOneFavoritesFood_WithCorrectRequest_ShouldReturnException() {
+        FavoritesFoodDto expected = createFavoritesFoodDto(userIdUUID, 12L, "Burger", 4);
+        FavoritesFood food = FavoritesFoodConverter.INSTANCE.getFavoritesFoodFromDto(expected);
+
+        when(foodRepository.save(food)).thenThrow(new FoodExistsException(ExceptionMessageCodes.FOOD_ALREADY_EXIST));
+
+        assertThrows(RuntimeException.class, () -> foodService.saveOneFavoritesFood(expected));
     }
 
     /**
