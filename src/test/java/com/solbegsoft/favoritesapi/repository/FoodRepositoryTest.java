@@ -3,6 +3,8 @@ package com.solbegsoft.favoritesapi.repository;
 
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;
 import com.solbegsoft.favoritesapi.repositories.FoodRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EmptySource;
@@ -27,9 +29,22 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Autowired
     private FoodRepository foodRepository;
 
-    void intit(){
-
+    /**
+     * Insert Data before each test
+     */
+    @BeforeEach
+    void init(){
+        insertFoods();
     }
+
+    /**
+     * Delete all data from DB
+     */
+    @AfterEach
+    void deleteData(){
+        foodRepository.deleteAll();
+    }
+
     /**
      * Test {@link FoodRepository#findAllFavoritesFood(UUID)}
      * Should Return List With Food
@@ -37,7 +52,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Test
     @Transactional
     void testFindAllFavoritesFood_ShouldReturnListWithFood() {
-        insertFoods();
         List<FavoritesFood> result = foodRepository.findAllFavoritesFood(userIdUUID);
         assertEquals(result.size(), 6);
     }
@@ -49,6 +63,7 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Test
     @Transactional
     void testFindAllFavoritesFood_ShouldReturnEmptyList() {
+        foodRepository.deleteAll();
         List<FavoritesFood> result = foodRepository.findAllFavoritesFood(userIdUUID);
         assertTrue(result.isEmpty());
     }
@@ -71,7 +86,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Test
     @Transactional
     void tesFindAllFavoritesFoodByBeerId_ShouldReturnList() {
-        insertFoods();
         List<FavoritesFood> resultOne = foodRepository.findAllFavoritesFoodByBeerId(userIdUUID, 10L);
         List<FavoritesFood> resultThree = foodRepository.findAllFavoritesFoodByBeerId(userIdUUID, 12L);
 
@@ -85,6 +99,7 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Test
     @Transactional
     void tesFindAllFavoritesFoodByBeerId_ShouldReturnEmptyList() {
+        foodRepository.deleteAll();
         List<FavoritesFood> resultOne = foodRepository.findAllFavoritesFoodByBeerId(userIdUUID, 10L);
         List<FavoritesFood> resultThree = foodRepository.findAllFavoritesFoodByBeerId(userIdUUID, 12L);
 
@@ -99,6 +114,7 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Test
     @Transactional
     void testFindAllFavoritesFoodByBeerId_WhenParametersNull_ShouldReturnEmptyList() {
+        foodRepository.deleteAll();
         List<FavoritesFood> resultOne = foodRepository.findAllFavoritesFoodByBeerId(null, null);
         List<FavoritesFood> resultThree = foodRepository.findAllFavoritesFoodByBeerId(null, null);
 
@@ -114,7 +130,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @ValueSource(strings = {"food", "Foo", "oo", "cy"})
     @Transactional
     void testFindAllFavoritesFoodByString_ShouldReturnList(String searchString) {
-        insertFoods();
         List<FavoritesFood> result = foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString);
         assertEquals(result.size(), 5);
     }
@@ -126,7 +141,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @ParameterizedTest
     @ValueSource(strings = {"ZZa", "pizz", "za"})
     void testFindAllFavoritesFoodByString_ShouldReturnListWithItems(String searchString) {
-        insertFoods();
         List<FavoritesFood> result = foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString);
         assertEquals(result.size(), 1);
     }
@@ -138,7 +152,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @ParameterizedTest
     @ValueSource(strings = {"gdbdfkbdba", "!1ed3r", "_&343rf"})
     void testFindAllFavoritesFoodByString_WithSearchString_ShouldReturnEmptyList(String searchString) {
-        insertFoods();
         List<FavoritesFood> result = foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString);
         assertTrue(result.isEmpty());
     }
@@ -151,7 +164,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @EmptySource
     @Transactional
     void testFindAllFavoritesFoodByString_WithEmptyString_ShouldReturnFullList(String searchString) {
-        insertFoods();
         List<FavoritesFood> result = foodRepository.findAllFavoritesFoodByString(userIdUUID, searchString);
         assertEquals(result.size(), 6);
     }
@@ -162,7 +174,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
      */
     @Test
     void testDeleteOne_WithCorrectParams() {
-        insertFoods();
         UUID beerId = UUID.randomUUID();
         assertDoesNotThrow(() -> foodRepository.deleteOne(userIdUUID, beerId));
     }
@@ -174,7 +185,6 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
      */
     @Test
     void testDeleteOne_WithNull_ShouldCompleteWithoutException() {
-        insertFoods();
         assertDoesNotThrow(() -> foodRepository.deleteOne(null, null));
     }
 
@@ -188,6 +198,7 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
         foodRepository.save(createFood(12L, 3));
         foodRepository.save(createFood(12L, 4));
         foodRepository.save(createFood(22L, "Pizza with cheese", 1));
+
     }
 
     /**

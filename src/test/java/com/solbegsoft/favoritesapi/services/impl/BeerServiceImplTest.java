@@ -47,6 +47,21 @@ class BeerServiceImplTest extends AbstractServiceTest {
     private BeerRepository beerRepository;
 
     /**
+     * Default number of page
+     */
+    public static final int DEFAULT_PAGEABLE_PAGE = 0;
+
+    /**
+     * Default size of page
+     */
+    public static final int DEFAULT_PAGEABLE_SIZE = 20;
+
+    /**
+     * Default sort column
+     */
+    public static final String DEFAULT_PAGEABLE_SORT = "id";
+
+    /**
      * Test {@link BeerService#getBeerById(UUID, UUID)}
      */
     @Test
@@ -327,12 +342,11 @@ class BeerServiceImplTest extends AbstractServiceTest {
     }
 
     /**
-     * Default Pageable
+     * Get default Pageable
      *
-     * @return Pageable
+     * @return {@link Pageable}
      */
     private Pageable getDefaultPageable() {
-
-        return PageRequest.of(0, 20, Sort.by("id"));
+        return PageRequest.of(DEFAULT_PAGEABLE_PAGE, DEFAULT_PAGEABLE_SIZE, Sort.by(DEFAULT_PAGEABLE_SORT));
     }
 }
