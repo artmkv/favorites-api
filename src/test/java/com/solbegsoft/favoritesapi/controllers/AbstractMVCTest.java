@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi;
+package com.solbegsoft.favoritesapi.controllers;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

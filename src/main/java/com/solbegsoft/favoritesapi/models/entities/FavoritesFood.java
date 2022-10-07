@@ -15,10 +15,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @ToString
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 @Entity
-@Table(name = "favorites_food", schema = "favorites")
+@Table(name = "favorites_food")
 public class FavoritesFood {
 
     /**

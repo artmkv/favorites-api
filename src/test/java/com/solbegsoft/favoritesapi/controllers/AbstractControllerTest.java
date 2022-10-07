@@ -2,7 +2,6 @@ package com.solbegsoft.favoritesapi.controllers;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.solbegsoft.favoritesapi.AbstractMVCTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;

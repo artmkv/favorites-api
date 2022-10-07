@@ -1,7 +1,7 @@
 package com.solbegsoft.favoritesapi.controllers.validation;
 
 
-import com.solbegsoft.favoritesapi.AbstractMVCTest;
+import com.solbegsoft.favoritesapi.controllers.AbstractMVCTest;
 
 /**
  * Abstract validation test
