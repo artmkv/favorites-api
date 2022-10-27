@@ -14,14 +14,11 @@ import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -32,8 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test {@link BeerRepository}
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest
 class BeerRepositoryTest extends AbstractRepositoryTest {
 
     /**

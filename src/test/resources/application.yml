@@ -1,16 +1,22 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/test-db
-    username: sa
-    password: sa
+#    driver-class-name: org.postgresql.Driver
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/test-db}
+    username: ${DB_USER:sa}
+    password: ${DB_PASS:sa}
+#    url: ${DB_URL:jdbc:postgresql://localhost:5432/demobase}
+#    username: ${DB_USER:postgres}
+#    password: ${DB_PASS:pass}
   profiles:
     active: test
   jpa:
     hibernate:
       ddl-auto: create-drop
+  #      ddl-auto: update
   flyway:
     enabled: false
+
 eureka:
   client:
     enabled: false

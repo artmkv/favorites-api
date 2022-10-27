@@ -1,5 +1,6 @@
 package com.solbegsoft.favoritesapi;
 
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -9,5 +10,4 @@ class FavoritesApiApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
