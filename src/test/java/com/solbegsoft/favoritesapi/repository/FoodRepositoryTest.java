@@ -53,7 +53,7 @@ class FoodRepositoryTest extends AbstractRepositoryTest {
     @Transactional
     void testFindAllFavoritesFood_ShouldReturnListWithFood() {
         List<FavoritesFood> result = foodRepository.findAllFavoritesFood(userIdUUID);
-        assertEquals(result.size(), 6);
+        assertEquals(6, result.size());
     }
 
     /**

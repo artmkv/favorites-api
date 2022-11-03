@@ -1,5 +1,4 @@
 --create beer table
-
 create table favorites_beer
 (
     id          uuid not null,
@@ -13,6 +12,7 @@ create table favorites_beer
     primary key (beer_api_id, id),
     constraint constraint_beer unique (user_id, beer_api_id)
 );
+
 --create food table
 create table favorites_food
 (

@@ -42,7 +42,7 @@ class FoodControllerValidationTest extends AbstractValidationTest {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request body is missing")));
+                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Invalid UUID string: " + userIdString)));
 
         mockMvc.perform(
                         delete("/favorites-api/v1/food/" + stringBeerId)
@@ -67,7 +67,7 @@ class FoodControllerValidationTest extends AbstractValidationTest {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.data").value("Required request header 'userId' for method parameter type UUID is not present"));
+                .andExpect(jsonPath("$.data").value("Required request header 'userId' for method parameter type UUID is present but converted to null"));
 
         mockMvc.perform(
                         post("/favorites-api/v1/food")
@@ -75,7 +75,7 @@ class FoodControllerValidationTest extends AbstractValidationTest {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request body is missing")));
+                .andExpect(jsonPath("$.data").value(Matchers.stringContainsInOrder("Required request header 'userId' for method parameter type UUID is present but converted to null")));
 
         mockMvc.perform(
                         delete("/favorites-api/v1/food/" + stringBeerId)
@@ -83,7 +83,7 @@ class FoodControllerValidationTest extends AbstractValidationTest {
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.data").value("Invalid UUID string: " + userIdString));
+                .andExpect(jsonPath("$.data").value("Required request header 'userId' for method parameter type UUID is present but converted to null"));
     }
 
     /**

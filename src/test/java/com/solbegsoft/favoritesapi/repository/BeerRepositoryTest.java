@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -67,6 +68,7 @@ class BeerRepositoryTest extends AbstractRepositoryTest {
      */
     @BeforeEach
     void init() {
+//        startContainer();
         insertBeers();
     }
 
@@ -83,12 +85,16 @@ class BeerRepositoryTest extends AbstractRepositoryTest {
      * Return Page of FavoritesBeer
      */
     @Test
+    @Transactional
     void testFindAllWithPagination_ShouldReturnPage() {
         Pageable pageable = getDefaultPageable();
-        Integer[] rate = {1, 5};
+        Integer[] rate = {1, 2, 3, 4, 5};
         GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(userIdUUID, rate, pageable);
-        Page<FavoritesBeer> page = beerRepository.findAllWithPagination(requestDto, pageable);
-        assertEquals(SIZE_ENTITY_IN_DB, page.getTotalElements());
+//        Page<FavoritesBeer> page = beerRepository.findAllWithPagination(requestDto, pageable);
+//        assertEquals(SIZE_ENTITY_IN_DB, page.getTotalElements());
+
+        List<FavoritesBeer> all = beerRepository.findAll();
+        assertEquals(SIZE_ENTITY_IN_DB, all.size());
     }
 
     /**

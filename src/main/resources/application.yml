@@ -7,7 +7,7 @@ spring:
     username: ${DB_USER:postgres}
     password: ${DB_PASS:pass}
   flyway:
-    schemas: ${FLYWAY_SCHEMAS:favorites}
+    enabled: true
 
 server:
   port: 8071
@@ -20,3 +20,4 @@ eureka:
     fetchRegistry: true
     service-url:
       default-zone: http://eureka-server:${eureka.client.eureka-server-port}/eureka
+    enabled: false
