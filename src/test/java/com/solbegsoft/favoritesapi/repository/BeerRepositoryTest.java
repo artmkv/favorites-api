@@ -68,7 +68,6 @@ class BeerRepositoryTest extends AbstractRepositoryTest {
      */
     @BeforeEach
     void init() {
-//        startContainer();
         insertBeers();
     }
 
@@ -90,8 +89,8 @@ class BeerRepositoryTest extends AbstractRepositoryTest {
         Pageable pageable = getDefaultPageable();
         Integer[] rate = {1, 2, 3, 4, 5};
         GetBeerRequestDto requestDto = RequestBeerConverter.convertToGetRequestDto(userIdUUID, rate, pageable);
-//        Page<FavoritesBeer> page = beerRepository.findAllWithPagination(requestDto, pageable);
-//        assertEquals(SIZE_ENTITY_IN_DB, page.getTotalElements());
+        Page<FavoritesBeer> page = beerRepository.findAllWithPagination(requestDto, pageable);
+        assertEquals(SIZE_ENTITY_IN_DB, page.getTotalElements());
 
         List<FavoritesBeer> all = beerRepository.findAll();
         assertEquals(SIZE_ENTITY_IN_DB, all.size());
@@ -187,14 +186,15 @@ class BeerRepositoryTest extends AbstractRepositoryTest {
      * Return FavoritesBeer
      */
     @Test
-    @Transactional
     void testFindOneBeerById_ShouldReturnBeer() {
         FavoritesBeer beer = createBeerWithDefaultBeerUUID(200L, "Craft Red", 4);
-        FavoritesBeer save = beerRepository.save(beer);
-        Optional<FavoritesBeer> result = beerRepository.findOneBeerById(userIdUUID, save.getId());
+        FavoritesBeer expected = beerRepository.save(beer);
+        UUID id = expected.getId();
 
-        assertTrue(result.isPresent());
-        assertEquals(save, result.get());
+        Optional<FavoritesBeer> actual = beerRepository.findOneBeerById(userIdUUID, id);
+
+        assertTrue(actual.isPresent());
+        assertEquals(expected, actual.get());
     }
 
     /**

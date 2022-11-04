@@ -20,7 +20,6 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "favorites_food")
-//@Table(name = "favorites_food", schema = "favorites")
 public class FavoritesFood {
 
     /**

@@ -39,14 +39,4 @@ public class FavoritesPostgresContainer extends PostgreSQLContainer<FavoritesPos
         }
         return container;
     }
-
-    @Override
-    public void start() {
-        super.start();
-    }
-
-    @Override
-    public void stop() {
-        super.stop();
-    }
 }
