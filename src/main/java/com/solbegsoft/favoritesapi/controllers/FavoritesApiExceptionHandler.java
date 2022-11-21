@@ -4,6 +4,7 @@ package com.solbegsoft.favoritesapi.controllers;
 import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
 import com.solbegsoft.favoritesapi.exceptions.*;
 import com.solbegsoft.favoritesapi.models.response.ResponseApi;
+import com.solbegsoft.favoritesapi.rabbit.AsyncException;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -185,4 +186,21 @@ public class FavoritesApiExceptionHandler {
 
         return new ResponseApi<>(e.getMessage());
     }
+
+
+    /**
+     * Handler AsyncException
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AsyncException.class)
+    public ResponseApi<String> handlerAsyncException(AsyncException e) {
+
+        return new ResponseApi<>(e.getMessage());
+    }
+
+
+
 }
