@@ -23,6 +23,7 @@ public class AsyncReceiver {
      */
     @RabbitHandler
     public void receiveMessage(String message) {
+        // TODO: 24.11.2022  бить по рукам за "+" в логах!!!!! в другом классе описано как нужно сделать =)
         log.info("Received  <" + message + ">");
     }
 

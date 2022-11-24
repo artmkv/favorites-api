@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AsyncService {
+    // TODO: 24.11.2022 тоже имя не оч, RabbitSender или что-то близкое по духу
 
     /**
      * @see RabbitTemplate
@@ -48,4 +49,15 @@ public class AsyncService {
         this.template.convertAndSend(queueBeers.getName(), sendString);
         log.info(" [X] Sent '" + request + "' routing" + queueBeers.getName());
     }
+
+    // TODO: 24.11.2022 имхо так лаконичнее будет
+    /**
+     *         try {
+     *             String sendString = objectMapper.writeValueAsString(request);
+     *             this.template.convertAndSend(queueBeers.getName(), sendString);
+     *             log.info(" [X] Sent '" + request + "' routing" + queueBeers.getName());
+     *         } catch (JsonProcessingException e) {
+     *             throw new AsyncException(e.getMessage());
+     *         }
+     */
 }
