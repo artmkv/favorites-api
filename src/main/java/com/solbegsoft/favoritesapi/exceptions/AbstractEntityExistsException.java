@@ -1,6 +1,7 @@
 package com.solbegsoft.favoritesapi.exceptions;
 
-import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
+
+import com.solbegsoft.favoritesapi.configurations.exceptions.ExceptionMessageCodes;
 
 import javax.persistence.EntityExistsException;
 

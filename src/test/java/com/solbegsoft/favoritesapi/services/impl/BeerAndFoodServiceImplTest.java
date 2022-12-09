@@ -54,6 +54,7 @@ class BeerAndFoodServiceImplTest extends AbstractServiceTest {
      */
     @Test
     void getBeerWithFoodByBeerId_ShouldReturnResponseBeerAndListFood() {
+
         FavoritesBeer beer = createFavoritesBeer(10L, userIdUUID, 3, "Beer");
         FavoritesBeerDto expectedBeer = FavoritesBeerConverter.INSTANCE.toDtoFromFavoritesBeer(beer);
         List<FavoritesFood> foods = createListFavoritesFood(userIdUUID);

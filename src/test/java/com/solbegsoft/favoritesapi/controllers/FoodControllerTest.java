@@ -42,7 +42,7 @@ class FoodControllerTest extends AbstractControllerTest {
 
     @Override
     protected String getEndPoint() {
-        return "/favorites-api/v1/food" ;
+        return "/favorites-api/v1/food";
     }
 
     /**
@@ -144,7 +144,8 @@ class FoodControllerTest extends AbstractControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-        TypeReference<ResponseApi<List<FavoritesFoodDto>>> typeReference = new TypeReference<>() {        };
+        TypeReference<ResponseApi<List<FavoritesFoodDto>>> typeReference = new TypeReference<>() {
+        };
         ResponseApi<List<FavoritesFoodDto>> responseListBeers = objectMapper.readValue(actualAsString, typeReference);
         List<FavoritesFoodDto> actualList = responseListBeers.getData();
         assertEquals(expectedList, actualList);

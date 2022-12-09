@@ -1,7 +1,7 @@
 package com.solbegsoft.favoritesapi.services.impl;
 
 
-import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
+import com.solbegsoft.favoritesapi.configurations.exceptions.ExceptionMessageCodes;
 import com.solbegsoft.favoritesapi.exceptions.FoodExistsException;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesFoodDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesFood;

@@ -3,7 +3,7 @@ package com.solbegsoft.favoritesapi.rabbit;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.solbegsoft.favoritesapi.rabbit.request.AsyncBeerRequestDto;
+import com.solbegsoft.favoritesapi.rabbit.request.RabbitBeerRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Queue;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AsyncService {
+public class RabbitSender {
 
     /**
      * @see RabbitTemplate
@@ -31,21 +31,26 @@ public class AsyncService {
     /**
      * @see Queue
      */
-    private final Queue queueBeers;
+    private final Queue queueFavoritesOutput;
+
+    /**
+     * @see Queue
+     */
+    private final Queue queueBeersInput;
 
     /**
      * Send message to Favorites
      *
      * @param request request with parameters
      */
-    public void send(AsyncBeerRequestDto request) {
-        String sendString;
+    public void send(RabbitBeerRequestDto request) {
         try {
-            sendString = objectMapper.writeValueAsString(request);
+            String sendString = objectMapper.writeValueAsString(request);
+            this.template.convertAndSend(queueFavoritesOutput.getName(), sendString);
+            this.template.convertAndSend(queueBeersInput.getName(), sendString);
+            log.info(" [X] Sent Rabbit '{}' routing {}", request, queueFavoritesOutput.getName());
         } catch (JsonProcessingException e) {
-            throw new AsyncException(e.getMessage());
+            throw new RabbitException(e.getMessage());
         }
-        this.template.convertAndSend(queueBeers.getName(), sendString);
-        log.info(" [X] Sent '" + request + "' routing" + queueBeers.getName());
     }
 }

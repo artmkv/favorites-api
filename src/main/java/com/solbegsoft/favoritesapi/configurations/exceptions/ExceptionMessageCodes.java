@@ -1,4 +1,4 @@
-package com.solbegsoft.favoritesapi.configuration.exceptions;
+package com.solbegsoft.favoritesapi.configurations.exceptions;
 
 
 import lombok.Getter;

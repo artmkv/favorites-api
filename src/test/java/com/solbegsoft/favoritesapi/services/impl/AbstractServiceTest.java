@@ -20,6 +20,8 @@ public abstract class AbstractServiceTest {
      */
     protected UUID userIdUUID;
 
+    protected static final String stringUserId = "d4ce25e2-22ac-11ed-b5a4-77ac144b4ca4";
+
     /**
      * UserId before Authentication
      */
