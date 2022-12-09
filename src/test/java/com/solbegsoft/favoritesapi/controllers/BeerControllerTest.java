@@ -3,7 +3,7 @@ package com.solbegsoft.favoritesapi.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.solbegsoft.favoritesapi.configuration.exceptions.ExceptionMessageCodes;
+import com.solbegsoft.favoritesapi.configurations.exceptions.ExceptionMessageCodes;
 import com.solbegsoft.favoritesapi.exceptions.BeerEntityNotFoundException;
 import com.solbegsoft.favoritesapi.models.dtos.FavoritesBeerDto;
 import com.solbegsoft.favoritesapi.models.entities.FavoritesBeer;
