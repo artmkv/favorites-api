@@ -8,6 +8,7 @@ import com.solbegsoft.favoritesapi.rabbit.RabbitException;
 import com.solbegsoft.favoritesapi.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -201,6 +202,16 @@ public class FavoritesApiExceptionHandler {
         return new ResponseApi<>(e.getMessage());
     }
 
+    /**
+     * Handler AsyncException
+     *
+     * @param e exception
+     * @return {@link ResponseApi}
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AmqpException.class)
+    public ResponseApi<String> handlerAmqpException(AmqpException e) {
 
-
+        return new ResponseApi<>(e.getMessage());
+    }
 }
