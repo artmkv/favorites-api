@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: favorites-api
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/demobase}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:pass}
+  flyway:
+    enabled: true
+
+server:
+  port: 8071
+
+eureka:
+  instance:
+    appname: favorites-api
+  client:
+    eureka-server-port: 8761
+    fetchRegistry: true
+    service-url:
+      default-zone: http://eureka-server:${eureka.client.eureka-server-port}/eureka
+    enabled: false
+
+rabbit:
+  queues:
+    beers-api: beers-api
+    auth-api: auth-api
+    error: error
